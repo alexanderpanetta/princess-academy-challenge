@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Princess Academy Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700&display=swap');
+
+        body {
+            font-family: 'Nunito', 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .game-container {
+            width: 900px;
+            height: 650px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Title Screen */
+        #title-screen {
+            background-image: url('images/title-screen.png');
+            justify-content: flex-end;
+            padding-bottom: 60px;
+        }
+
+        .title-content {
+            background: rgba(255,255,255,0.95);
+            padding: 25px 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        #title-screen h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 36px;
+            color: #C71585;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        #title-screen .subtitle {
+            font-size: 18px;
+            color: #8B4513;
+            margin-bottom: 20px;
+        }
+
+        .princess-avatar {
+            width: 100px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .princess-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            font-size: 20px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #FF69B4 0%, #C71585 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(199,21,133,0.4);
+            border: 3px solid #FFB6C1;
+        }
+
+        .btn-answer {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 18px;
+            margin: 6px 0;
+            background: linear-gradient(180deg, #FFF0F5 0%, #FFB6C1 100%);
+            color: #8B008B;
+            border: 3px solid #DDA0DD;
+            border-radius: 15px;
+        }
+
+        .btn-answer:hover {
+            background: linear-gradient(180deg, #FFB6C1 0%, #FF69B4 100%);
+            color: white;
+            border-color: #C71585;
+        }
+
+        .btn-answer.correct {
+            background: linear-gradient(180deg, #90EE90 0%, #32CD32 100%);
+            color: white;
+            border-color: #228B22;
+        }
+
+        .btn-answer.incorrect {
+            background: linear-gradient(180deg, #FFB6C1 0%, #FF6B6B 100%);
+            color: white;
+            border-color: #DC143C;
+        }
+
+        /* Question Screen */
+        .question-screen-reading {
+            background-image: url('images/library.png');
+        }
+
+        .question-screen-math {
+            background-image: url('images/treasury.png');
+        }
+
+        .question-panel {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px 35px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            border: 4px solid #DDA0DD;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0e6fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 2px solid #DDA0DD;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF69B4, #C71585);
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .helper-icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .helper-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .challenge-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 24px;
+            color: #C71585;
+        }
+
+        .question-counter {
+            font-size: 16px;
+            color: #8B4513;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            color: #4B0082;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        .answers-container {
+            width: 100%;
+        }
+
+        /* Transition Screen */
+        #transition-screen {
+            background-image: url('images/library.png');
+        }
+
+        .transition-panel {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 35px 50px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            border: 4px solid #DDA0DD;
+        }
+
+        #transition-screen h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 32px;
+            color: #C71585;
+            margin-bottom: 15px;
+        }
+
+        #transition-screen p {
+            font-size: 20px;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-family: 'Fredoka One', cursive;
+            font-size: 36px;
+            color: #4B0082;
+            margin: 15px 0;
+        }
+
+        .next-challenge-text {
+            font-size: 18px;
+            color: #6B4423;
+            margin: 20px 0;
+        }
+
+        /* Results Screen */
+        #results-screen {
+            background-image: url('images/victory.png');
+        }
+
+        .results-panel {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px 50px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            border: 4px solid #FFD700;
+        }
+
+        #results-screen h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 36px;
+            color: #C71585;
+            margin-bottom: 15px;
+        }
+
+        .final-score {
+            font-size: 22px;
+            color: #4B0082;
+            margin-bottom: 15px;
+        }
+
+        .score-breakdown {
+            font-size: 16px;
+            color: #8B4513;
+            margin-bottom: 20px;
+        }
+
+        .medal-container {
+            width: 120px;
+            height: 140px;
+            margin: 15px auto;
+        }
+
+        .medal-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .medal-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 26px;
+            color: #8B4513;
+            margin-bottom: 20px;
+        }
+
+        .celebration {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* Medal-specific colors */
+        .gold .results-panel { border-color: #FFD700; }
+        .gold .medal-text { color: #DAA520; }
+
+        .silver .results-panel { border-color: #C0C0C0; }
+        .silver .medal-text { color: #808080; }
+
+        .bronze .results-panel { border-color: #CD7F32; }
+        .bronze .medal-text { color: #8B4513; }
+
+        .no-medal .results-panel { border-color: #DDA0DD; }
+        .no-medal .medal-text { color: #C71585; }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Title Screen -->
+        <div id="title-screen" class="screen active">
+            <div class="title-content">
+                <div class="princess-avatar">
+                    <img src="images/princess.png" alt="Princess">
+                </div>
+                <h1>Princess Academy Challenge</h1>
+                <p class="subtitle">Become a Certified Royal Scholar!</p>
+                <button class="btn btn-primary" onclick="startGame()">Start Challenge</button>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen question-screen-reading">
+            <div class="question-panel">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="challenge-header">
+                    <div class="helper-icon" id="helper-icon">
+                        <img src="images/owl.png" alt="Helper">
+                    </div>
+                    <h2 class="challenge-title" id="challenge-title">The Royal Library</h2>
+                </div>
+                <p class="question-counter" id="question-counter">Question 1 of 5</p>
+                <div class="question-text" id="question-text">
+                    What is the question?
+                </div>
+                <div class="answers-container" id="answers-container">
+                    <!-- Answers will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Transition Screen -->
+        <div id="transition-screen" class="screen">
+            <div class="transition-panel">
+                <h2>Reading Complete!</h2>
+                <p>You scored:</p>
+                <div class="score-display" id="reading-score-display">0 out of 5</div>
+                <p class="next-challenge-text">Now let's head to the Royal Treasury!</p>
+                <div class="helper-icon" style="margin: 20px auto;">
+                    <img src="images/dwarf.png" alt="Dwarf">
+                </div>
+                <button class="btn btn-primary" onclick="startMathChallenge()">Start Math Challenge</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="results-panel">
+                <div class="celebration" id="celebration"></div>
+                <h2>Challenge Complete!</h2>
+                <div class="final-score" id="final-score">You scored 8 out of 10!</div>
+                <div class="score-breakdown" id="score-breakdown">Reading: 4/5 | Math: 4/5</div>
+                <div class="medal-container" id="medal-container">
+                    <img src="images/gold-medal.png" alt="Medal" id="medal-image">
+                </div>
+                <p class="medal-text" id="medal-text">Gold Medal!</p>
+                <button class="btn btn-primary" onclick="restartGame()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audio Context for music
+        let audioContext = null;
+
+        function getAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioContext;
+        }
+
+        function playNote(frequency, startTime, duration, type = 'sine', volume = 0.3) {
+            const ctx = getAudioContext();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+
+            gainNode.gain.setValueAtTime(volume, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration - 0.05);
+
+            oscillator.start(startTime);
+            oscillator.stop(startTime + duration);
+        }
+
+        function playVictoryMusic() {
+            // Happy triumphant fanfare for Gold/Silver
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+
+            // C major triumphant melody
+            const notes = [
+                { freq: 523.25, time: 0, dur: 0.2 },     // C5
+                { freq: 659.25, time: 0.2, dur: 0.2 },   // E5
+                { freq: 783.99, time: 0.4, dur: 0.2 },   // G5
+                { freq: 1046.50, time: 0.6, dur: 0.4 },  // C6
+                { freq: 783.99, time: 1.0, dur: 0.2 },   // G5
+                { freq: 1046.50, time: 1.2, dur: 0.6 },  // C6 (held)
+            ];
+
+            notes.forEach(note => {
+                playNote(note.freq, now + note.time, note.dur, 'triangle', 0.4);
+            });
+
+            // Add harmony
+            const harmony = [
+                { freq: 261.63, time: 0, dur: 0.8 },     // C4
+                { freq: 329.63, time: 0, dur: 0.8 },     // E4
+                { freq: 392.00, time: 0.8, dur: 1.0 },   // G4
+                { freq: 523.25, time: 0.8, dur: 1.0 },   // C5
+            ];
+
+            harmony.forEach(note => {
+                playNote(note.freq, now + note.time, note.dur, 'sine', 0.2);
+            });
+        }
+
+        function playOkayMusic() {
+            // Moderate, encouraging tune for Bronze
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+
+            const notes = [
+                { freq: 392.00, time: 0, dur: 0.3 },     // G4
+                { freq: 440.00, time: 0.3, dur: 0.3 },   // A4
+                { freq: 493.88, time: 0.6, dur: 0.3 },   // B4
+                { freq: 523.25, time: 0.9, dur: 0.5 },   // C5
+            ];
+
+            notes.forEach(note => {
+                playNote(note.freq, now + note.time, note.dur, 'triangle', 0.3);
+            });
+        }
+
+        function playSadMusic() {
+            // Gentle, encouraging "try again" melody
+            const ctx = getAudioContext();
+            const now = ctx.currentTime;
+
+            // Descending minor melody
+            const notes = [
+                { freq: 392.00, time: 0, dur: 0.4 },     // G4
+                { freq: 349.23, time: 0.4, dur: 0.4 },   // F4
+                { freq: 329.63, time: 0.8, dur: 0.4 },   // E4
+                { freq: 293.66, time: 1.2, dur: 0.6 },   // D4
+            ];
+
+            notes.forEach(note => {
+                playNote(note.freq, now + note.time, note.dur, 'sine', 0.25);
+            });
+        }
+
+        // Game State
+        let currentQuestion = 0;
+        let currentChallenge = 'reading';
+        let readingScore = 0;
+        let mathScore = 0;
+        let answeredCurrent = false;
+        let selectedReadingQuestions = [];
+        let selectedMathQuestions = [];
+
+        // Reading Question Pool - 25 questions (5 per slot) - SLIGHTLY CHALLENGING
+        const readingQuestionPool = [
+            // Slot 1: Simple inference (very clear clues)
+            [
+                {
+                    question: "Read: 'Tom smiled when he saw the birthday cake.' How did Tom feel?",
+                    answers: ["Sad", "Happy", "Scared", "Angry"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The puppy wagged its tail when Sara came home.' How does the puppy feel?",
+                    answers: ["Angry", "Scared", "Happy", "Sleepy"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Mom put on her coat and boots. It was snowing outside.' What is the weather like?",
+                    answers: ["Sunny", "Rainy", "Snowy", "Windy"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Lily rubbed her eyes and yawned.' How does Lily feel?",
+                    answers: ["Hungry", "Tired", "Happy", "Cold"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Jake frowned when he dropped his ice cream.' How did Jake feel?",
+                    answers: ["Happy", "Excited", "Sad", "Sleepy"],
+                    correct: 2
+                }
+            ],
+            // Slot 2: Easy vocabulary (common words)
+            [
+                {
+                    question: "Read: 'The tiny ant was very small.' What does 'tiny' mean?",
+                    answers: ["Big", "Very small", "Fast", "Loud"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The happy girl was smiling all day.' What does 'happy' mean the opposite of?",
+                    answers: ["Glad", "Joyful", "Sad", "Cheerful"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'The loud thunder scared the cat.' What does 'loud' mean?",
+                    answers: ["Quiet", "Not quiet, makes a big sound", "Soft", "Small"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The fast rabbit ran quickly.' What does 'fast' mean?",
+                    answers: ["Slow", "Quick", "Tired", "Big"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The brave knight was not scared.' What does 'brave' mean?",
+                    answers: ["Scared", "Not scared, courageous", "Tired", "Sad"],
+                    correct: 1
+                }
+            ],
+            // Slot 3: Simple cause and effect
+            [
+                {
+                    question: "Read: 'It rained, so we stayed inside.' Why did we stay inside?",
+                    answers: ["It was sunny", "It rained", "We were tired", "It was bedtime"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Sam was hungry, so he ate a sandwich.' Why did Sam eat?",
+                    answers: ["He was bored", "He was hungry", "He was tired", "He was cold"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The plant grew tall because it got water and sun.' What helped the plant grow?",
+                    answers: ["Water and sun", "Only water", "Nothing", "Wind"],
+                    correct: 0
+                },
+                {
+                    question: "Read: 'Emma fell asleep because she was tired.' Why did Emma fall asleep?",
+                    answers: ["She was hungry", "She was happy", "She was tired", "She was bored"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'The snowman melted because the sun came out.' What made the snowman melt?",
+                    answers: ["The rain", "The sun", "The wind", "The snow"],
+                    correct: 1
+                }
+            ],
+            // Slot 4: What is the story about?
+            [
+                {
+                    question: "Read: 'Cats like to sleep. Cats like to play. Cats make good pets.' What is this about?",
+                    answers: ["Dogs", "Birds", "Cats", "Fish"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'I brush my teeth every morning. I brush them at night too. Clean teeth are healthy!' What is this about?",
+                    answers: ["Eating food", "Brushing teeth", "Going to bed", "Waking up"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'We went to the beach. We played in the sand. We swam in the water.' Where did they go?",
+                    answers: ["The park", "The zoo", "The beach", "The store"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Birds can fly. Birds have feathers. Birds build nests.' What is this about?",
+                    answers: ["Fish", "Dogs", "Cats", "Birds"],
+                    correct: 3
+                },
+                {
+                    question: "Read: 'In fall, leaves change color. They turn red, orange, and yellow. Then they fall off the trees.' What season is this about?",
+                    answers: ["Summer", "Winter", "Spring", "Fall"],
+                    correct: 3
+                }
+            ],
+            // Slot 5: Short story comprehension
+            [
+                {
+                    question: "Read: 'Ben has a dog named Max. Max is brown. Ben loves to play fetch with Max.' What color is Max?",
+                    answers: ["White", "Black", "Brown", "Gray"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Lily went to the store. She bought apples and milk. Then she went home.' What did Lily buy?",
+                    answers: ["Bread and eggs", "Apples and milk", "Cookies and juice", "Bananas and water"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'It was Anna's birthday. She had a pink cake. She got lots of presents.' What color was the cake?",
+                    answers: ["Blue", "Green", "Pink", "Yellow"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Tom went to the zoo. He saw lions and monkeys. The monkeys were his favorite.' What was Tom's favorite animal?",
+                    answers: ["Lions", "Elephants", "Monkeys", "Tigers"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Mom made pancakes for breakfast. She put butter and syrup on them. They were yummy!' What did Mom make?",
+                    answers: ["Eggs", "Toast", "Pancakes", "Cereal"],
+                    correct: 2
+                }
+            ]
+        ];
+
+        // Math Question Pool - 25 questions (5 per slot) - EASIER
+        const mathQuestionPool = [
+            // Slot 1: Simple addition (sums up to 10)
+            [
+                {
+                    question: "What is 3 + 4?",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 1
+                },
+                {
+                    question: "What is 5 + 2?",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 1
+                },
+                {
+                    question: "What is 4 + 5?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "What is 6 + 3?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "What is 2 + 6?",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 2
+                }
+            ],
+            // Slot 2: Simple subtraction (within 10)
+            [
+                {
+                    question: "What is 8 - 3?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "What is 7 - 2?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "What is 9 - 4?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "What is 10 - 3?",
+                    answers: ["5", "6", "7", "8"],
+                    correct: 2
+                },
+                {
+                    question: "What is 6 - 2?",
+                    answers: ["2", "3", "4", "5"],
+                    correct: 2
+                }
+            ],
+            // Slot 3: Easy word problems (small numbers)
+            [
+                {
+                    question: "Emma has 5 apples. She gets 3 more. How many apples does Emma have now?",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 2
+                },
+                {
+                    question: "Tom has 7 cookies. He eats 2. How many cookies are left?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "There are 4 birds in a tree. 3 more birds come. How many birds are there now?",
+                    answers: ["5", "6", "7", "8"],
+                    correct: 2
+                },
+                {
+                    question: "Lily has 6 crayons. She gives 2 to her friend. How many crayons does Lily have now?",
+                    answers: ["3", "4", "5", "6"],
+                    correct: 1
+                },
+                {
+                    question: "Sam sees 3 red flowers and 4 yellow flowers. How many flowers in all?",
+                    answers: ["5", "6", "7", "8"],
+                    correct: 2
+                }
+            ],
+            // Slot 4: Counting and patterns
+            [
+                {
+                    question: "What number comes next? 2, 4, 6, ___",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 1
+                },
+                {
+                    question: "What number comes next? 5, 6, 7, ___",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 2
+                },
+                {
+                    question: "What number comes next? 1, 3, 5, ___",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 1
+                },
+                {
+                    question: "Count by 2s: 2, 4, ___, 8",
+                    answers: ["5", "6", "7", "9"],
+                    correct: 1
+                },
+                {
+                    question: "What number is between 6 and 8?",
+                    answers: ["5", "6", "7", "9"],
+                    correct: 2
+                }
+            ],
+            // Slot 5: Comparing numbers
+            [
+                {
+                    question: "Which number is bigger: 7 or 4?",
+                    answers: ["7", "4", "They are equal", "Cannot tell"],
+                    correct: 0
+                },
+                {
+                    question: "Which number is smaller: 3 or 8?",
+                    answers: ["3", "8", "They are equal", "Cannot tell"],
+                    correct: 0
+                },
+                {
+                    question: "Which number is bigger: 5 or 9?",
+                    answers: ["5", "9", "They are equal", "Cannot tell"],
+                    correct: 1
+                },
+                {
+                    question: "Which number is smaller: 6 or 2?",
+                    answers: ["6", "2", "They are equal", "Cannot tell"],
+                    correct: 1
+                },
+                {
+                    question: "Are these equal? 4 + 1 and 5",
+                    answers: ["Yes, they are equal", "No, 4 + 1 is bigger", "No, 5 is bigger", "Cannot tell"],
+                    correct: 0
+                }
+            ]
+        ];
+
+        function selectRandomQuestions() {
+            // Select one random question from each slot
+            selectedReadingQuestions = readingQuestionPool.map(slot =>
+                slot[Math.floor(Math.random() * slot.length)]
+            );
+            selectedMathQuestions = mathQuestionPool.map(slot =>
+                slot[Math.floor(Math.random() * slot.length)]
+            );
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() {
+            currentQuestion = 0;
+            currentChallenge = 'reading';
+            readingScore = 0;
+            mathScore = 0;
+
+            // Select new random questions for this game
+            selectRandomQuestions();
+
+            const questionScreen = document.getElementById('question-screen');
+            questionScreen.classList.remove('question-screen-math');
+            questionScreen.classList.add('question-screen-reading');
+
+            showScreen('question-screen');
+            loadQuestion();
+        }
+
+        function startMathChallenge() {
+            currentQuestion = 0;
+            currentChallenge = 'math';
+
+            const questionScreen = document.getElementById('question-screen');
+            questionScreen.classList.remove('question-screen-reading');
+            questionScreen.classList.add('question-screen-math');
+
+            document.getElementById('helper-icon').innerHTML = '<img src="images/dwarf.png" alt="Dwarf">';
+
+            showScreen('question-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answeredCurrent = false;
+            const questions = currentChallenge === 'reading' ? selectedReadingQuestions : selectedMathQuestions;
+            const question = questions[currentQuestion];
+
+            // Update UI
+            document.getElementById('challenge-title').textContent =
+                currentChallenge === 'reading' ? 'The Royal Library' : 'The Royal Treasury';
+
+            document.getElementById('question-counter').textContent =
+                `Question ${currentQuestion + 1} of 5`;
+
+            // Update progress bar (0-10 total questions)
+            const totalProgress = currentChallenge === 'reading' ? currentQuestion : currentQuestion + 5;
+            document.getElementById('progress-fill').style.width = `${totalProgress * 10}%`;
+
+            document.getElementById('question-text').textContent = question.question;
+
+            // Update helper icon
+            document.getElementById('helper-icon').innerHTML =
+                `<img src="images/${currentChallenge === 'reading' ? 'owl' : 'dragon'}.png" alt="Helper">`;
+
+            // Create answer buttons
+            const container = document.getElementById('answers-container');
+            container.innerHTML = '';
+
+            question.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-answer';
+                btn.textContent = answer;
+                btn.onclick = () => selectAnswer(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(index) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+
+            const questions = currentChallenge === 'reading' ? selectedReadingQuestions : selectedMathQuestions;
+            const question = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.btn-answer');
+
+            // Show correct/incorrect
+            buttons.forEach((btn, i) => {
+                btn.style.pointerEvents = 'none';
+                if (i === question.correct) {
+                    btn.classList.add('correct');
+                } else if (i === index && index !== question.correct) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            // Update score
+            if (index === question.correct) {
+                if (currentChallenge === 'reading') {
+                    readingScore++;
+                } else {
+                    mathScore++;
+                }
+            }
+
+            // Move to next question after delay
+            setTimeout(() => {
+                currentQuestion++;
+
+                if (currentQuestion >= 5) {
+                    if (currentChallenge === 'reading') {
+                        // Show transition screen
+                        document.getElementById('reading-score-display').textContent =
+                            `${readingScore} out of 5`;
+                        showScreen('transition-screen');
+                    } else {
+                        // Show final results
+                        showResults();
+                    }
+                } else {
+                    loadQuestion();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            const totalScore = readingScore + mathScore;
+            let medalType, medalText, celebration, medalImage;
+
+            if (totalScore >= 8) {
+                medalType = 'gold';
+                medalText = 'Gold Medal!';
+                celebration = '🏆 ✨ 🎉';
+                medalImage = 'images/gold-medal.png';
+                setTimeout(playVictoryMusic, 300);
+            } else if (totalScore >= 5) {
+                medalType = 'silver';
+                medalText = 'Silver Medal!';
+                celebration = '🥈 🎉';
+                medalImage = 'images/silver-medal.png';
+                setTimeout(playVictoryMusic, 300);
+            } else if (totalScore >= 3) {
+                medalType = 'bronze';
+                medalText = 'Bronze Medal!';
+                celebration = '🥉 👏';
+                medalImage = 'images/bronze-medal.png';
+                setTimeout(playOkayMusic, 300);
+            } else {
+                medalType = 'no-medal';
+                medalText = 'Keep Practicing!';
+                celebration = '⭐ 💪';
+                medalImage = 'images/star-ribbon.png';
+                setTimeout(playSadMusic, 300);
+            }
+
+            const resultsScreen = document.getElementById('results-screen');
+            resultsScreen.className = `screen ${medalType}`;
+
+            document.getElementById('celebration').textContent = celebration;
+            document.getElementById('final-score').textContent = `You scored ${totalScore} out of 10!`;
+            document.getElementById('score-breakdown').textContent = `Reading: ${readingScore}/5 | Math: ${mathScore}/5`;
+            document.getElementById('medal-text').textContent = medalText;
+            document.getElementById('medal-image').src = medalImage;
+
+            showScreen('results-screen');
+        }
+
+        function restartGame() {
+            const questionScreen = document.getElementById('question-screen');
+            questionScreen.classList.remove('question-screen-math');
+            questionScreen.classList.add('question-screen-reading');
+            document.getElementById('helper-icon').innerHTML = '<img src="images/owl.png" alt="Owl">';
+            showScreen('title-screen');
+        }
+    </script>
+</body>
+</html>
