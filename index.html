@@ -509,145 +509,145 @@
         let selectedReadingQuestions = [];
         let selectedMathQuestions = [];
 
-        // Reading Question Pool - 25 questions (5 per slot) - SLIGHTLY CHALLENGING
+        // Reading Question Pool - 25 questions (5 per slot) - WITH EDUCATIONAL FACTS
         const readingQuestionPool = [
-            // Slot 1: Simple inference (very clear clues)
+            // Slot 1: Simple inference with world/art/science facts
             [
                 {
-                    question: "Read: 'Tom smiled when he saw the birthday cake.' How did Tom feel?",
+                    question: "Read: 'Leonardo da Vinci painted the Mona Lisa in Italy. It is one of the most famous paintings in the world! People smile when they see her mysterious face.' How do people feel when they see the Mona Lisa?",
                     answers: ["Sad", "Happy", "Scared", "Angry"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The puppy wagged its tail when Sara came home.' How does the puppy feel?",
-                    answers: ["Angry", "Scared", "Happy", "Sleepy"],
+                    question: "Read: 'The Eiffel Tower is a very tall tower in Paris, France. Visitors climb to the top and see the whole city! They clap their hands with joy.' How do visitors feel at the top?",
+                    answers: ["Angry", "Scared", "Excited", "Sleepy"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Mom put on her coat and boots. It was snowing outside.' What is the weather like?",
-                    answers: ["Sunny", "Rainy", "Snowy", "Windy"],
+                    question: "Read: 'Astronauts travel to space in rockets. When they look at Earth from space, they see blue oceans and green land. They smile because Earth is so beautiful.' How do astronauts feel when they see Earth?",
+                    answers: ["Sad", "Amazed", "Angry", "Bored"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Dolphins are very smart animals that live in the ocean. They jump and play in the waves all day long.' How do dolphins seem to feel?",
+                    answers: ["Sad", "Tired", "Happy", "Scared"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Lily rubbed her eyes and yawned.' How does Lily feel?",
-                    answers: ["Hungry", "Tired", "Happy", "Cold"],
-                    correct: 1
-                },
-                {
-                    question: "Read: 'Jake frowned when he dropped his ice cream.' How did Jake feel?",
-                    answers: ["Happy", "Excited", "Sad", "Sleepy"],
-                    correct: 2
-                }
-            ],
-            // Slot 2: Easy vocabulary (common words)
-            [
-                {
-                    question: "Read: 'The tiny ant was very small.' What does 'tiny' mean?",
-                    answers: ["Big", "Very small", "Fast", "Loud"],
-                    correct: 1
-                },
-                {
-                    question: "Read: 'The happy girl was smiling all day.' What does 'happy' mean the opposite of?",
-                    answers: ["Glad", "Joyful", "Sad", "Cheerful"],
-                    correct: 2
-                },
-                {
-                    question: "Read: 'The loud thunder scared the cat.' What does 'loud' mean?",
-                    answers: ["Quiet", "Not quiet, makes a big sound", "Soft", "Small"],
-                    correct: 1
-                },
-                {
-                    question: "Read: 'The fast rabbit ran quickly.' What does 'fast' mean?",
-                    answers: ["Slow", "Quick", "Tired", "Big"],
-                    correct: 1
-                },
-                {
-                    question: "Read: 'The brave knight was not scared.' What does 'brave' mean?",
-                    answers: ["Scared", "Not scared, courageous", "Tired", "Sad"],
+                    question: "Read: 'The Pyramids in Egypt are very, very old. They were built thousands of years ago! When people see how big they are, their eyes get wide and their mouths drop open.' How do people feel when they see the Pyramids?",
+                    answers: ["Bored", "Amazed", "Angry", "Sleepy"],
                     correct: 1
                 }
             ],
-            // Slot 3: Simple cause and effect
+            // Slot 2: Vocabulary with educational context
             [
                 {
-                    question: "Read: 'It rained, so we stayed inside.' Why did we stay inside?",
-                    answers: ["It was sunny", "It rained", "We were tired", "It was bedtime"],
+                    question: "Read: 'The elephant is the largest animal that lives on land. It is bigger than a car!' What does 'largest' mean?",
+                    answers: ["Smallest", "Biggest", "Fastest", "Loudest"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'Sam was hungry, so he ate a sandwich.' Why did Sam eat?",
-                    answers: ["He was bored", "He was hungry", "He was tired", "He was cold"],
+                    question: "Read: 'The cheetah is the fastest animal on land. It can run faster than a car!' What does 'fastest' mean?",
+                    answers: ["Slowest", "Quickest", "Tallest", "Smallest"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The plant grew tall because it got water and sun.' What helped the plant grow?",
-                    answers: ["Water and sun", "Only water", "Nothing", "Wind"],
-                    correct: 0
+                    question: "Read: 'The ocean is very deep. Giant whales swim in the deep, dark water far below.' What does 'deep' mean?",
+                    answers: ["Shallow", "Goes down far", "Very wide", "Very warm"],
+                    correct: 1
                 },
                 {
-                    question: "Read: 'Emma fell asleep because she was tired.' Why did Emma fall asleep?",
-                    answers: ["She was hungry", "She was happy", "She was tired", "She was bored"],
-                    correct: 2
+                    question: "Read: 'The ancient Colosseum in Rome is very, very old. Ancient means from a long, long time ago.' What does 'ancient' mean?",
+                    answers: ["Brand new", "Very old", "Very big", "Very pretty"],
+                    correct: 1
                 },
                 {
-                    question: "Read: 'The snowman melted because the sun came out.' What made the snowman melt?",
-                    answers: ["The rain", "The sun", "The wind", "The snow"],
+                    question: "Read: 'The rainforest is a lush place with many, many trees, plants, and animals. Lush means full of green, growing things.' What does 'lush' mean?",
+                    answers: ["Empty and dry", "Full of plants", "Very cold", "Very dark"],
                     correct: 1
                 }
             ],
-            // Slot 4: What is the story about?
+            // Slot 3: Cause and effect with world/science facts
             [
                 {
-                    question: "Read: 'Cats like to sleep. Cats like to play. Cats make good pets.' What is this about?",
-                    answers: ["Dogs", "Birds", "Cats", "Fish"],
-                    correct: 2
-                },
-                {
-                    question: "Read: 'I brush my teeth every morning. I brush them at night too. Clean teeth are healthy!' What is this about?",
-                    answers: ["Eating food", "Brushing teeth", "Going to bed", "Waking up"],
+                    question: "Read: 'Penguins live in very cold places like Antarctica. They have thick feathers so they can stay warm.' Why do penguins have thick feathers?",
+                    answers: ["To look pretty", "To stay warm", "To swim faster", "To fly better"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'We went to the beach. We played in the sand. We swam in the water.' Where did they go?",
-                    answers: ["The park", "The zoo", "The beach", "The store"],
+                    question: "Read: 'Sunflowers turn to face the sun during the day because they need sunlight to grow.' Why do sunflowers turn toward the sun?",
+                    answers: ["They are dancing", "They need sunlight", "They are tired", "They hear music"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The Moon has no air to breathe. Astronauts must wear special space suits so they can breathe on the Moon.' Why do astronauts wear space suits on the Moon?",
+                    answers: ["To look cool", "To stay warm only", "So they can breathe", "To run faster"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Birds can fly. Birds have feathers. Birds build nests.' What is this about?",
-                    answers: ["Fish", "Dogs", "Cats", "Birds"],
+                    question: "Read: 'Many tourists visit Rome, Italy because it has beautiful old buildings like the Colosseum.' Why do tourists visit Rome?",
+                    answers: ["It is always snowing", "It has beautiful old buildings", "It has no people", "It is very small"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'A caterpillar makes a cocoon so it can change into a beautiful butterfly!' Why does a caterpillar make a cocoon?",
+                    answers: ["To hide from rain", "To take a short nap", "To change into a butterfly", "To eat more leaves"],
+                    correct: 2
+                }
+            ],
+            // Slot 4: Main idea with world/art/science topics
+            [
+                {
+                    question: "Read: 'The Earth goes around the Sun. The Moon goes around the Earth. It takes one whole year for Earth to travel around the Sun.' What is this about?",
+                    answers: ["The ocean", "Food", "Space and planets", "Animals"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Italy is shaped like a boot! Rome is the capital city. Delicious pizza and pasta come from Italy.' What is this about?",
+                    answers: ["France", "Italy", "Spain", "England"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Lions live in Africa. Male lions have big fluffy manes. Lions are called the King of the Animals.' What is this about?",
+                    answers: ["Elephants", "Tigers", "Lions", "Bears"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Claude Monet loved to paint flowers and water. He painted beautiful gardens with water lilies. His paintings are in museums around the world.' What is this about?",
+                    answers: ["A chef", "A doctor", "A teacher", "An artist"],
                     correct: 3
                 },
                 {
-                    question: "Read: 'In fall, leaves change color. They turn red, orange, and yellow. Then they fall off the trees.' What season is this about?",
-                    answers: ["Summer", "Winter", "Spring", "Fall"],
-                    correct: 3
+                    question: "Read: 'The ocean is full of amazing creatures. Colorful coral reefs are underwater homes for fish. Whales and dolphins swim in the deep blue sea.' What is this about?",
+                    answers: ["The mountains", "The desert", "The ocean", "The forest"],
+                    correct: 2
                 }
             ],
-            // Slot 5: Short story comprehension
+            // Slot 5: Story comprehension with educational facts
             [
                 {
-                    question: "Read: 'Ben has a dog named Max. Max is brown. Ben loves to play fetch with Max.' What color is Max?",
-                    answers: ["White", "Black", "Brown", "Gray"],
+                    question: "Read: 'The Leaning Tower of Pisa is a famous tower in Italy. It is white and it leans to one side! Many people take funny photos pretending to hold it up.' What color is the Leaning Tower of Pisa?",
+                    answers: ["Red", "Blue", "White", "Green"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Lily went to the store. She bought apples and milk. Then she went home.' What did Lily buy?",
-                    answers: ["Bread and eggs", "Apples and milk", "Cookies and juice", "Bananas and water"],
+                    question: "Read: 'Mars is called the Red Planet because it looks red in the sky. Venus is another planet that is very, very hot.' What color is Mars?",
+                    answers: ["Blue", "Green", "Yellow", "Red"],
+                    correct: 3
+                },
+                {
+                    question: "Read: 'Big Ben is a famous clock tower in London, England. Inside the tower is a giant bell. When the bell rings, it goes BONG, BONG!' What is inside Big Ben?",
+                    answers: ["A slide", "A giant bell", "A swimming pool", "A kitchen"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'It was Anna's birthday. She had a pink cake. She got lots of presents.' What color was the cake?",
-                    answers: ["Blue", "Green", "Pink", "Yellow"],
-                    correct: 2
+                    question: "Read: 'Cleopatra was a powerful queen of Egypt long, long ago. She lived near the Nile River. The Nile is the longest river in Africa!' What river did Cleopatra live near?",
+                    answers: ["The Amazon", "The Nile", "The Thames", "The Seine"],
+                    correct: 1
                 },
                 {
-                    question: "Read: 'Tom went to the zoo. He saw lions and monkeys. The monkeys were his favorite.' What was Tom's favorite animal?",
-                    answers: ["Lions", "Elephants", "Monkeys", "Tigers"],
-                    correct: 2
-                },
-                {
-                    question: "Read: 'Mom made pancakes for breakfast. She put butter and syrup on them. They were yummy!' What did Mom make?",
-                    answers: ["Eggs", "Toast", "Pancakes", "Cereal"],
+                    question: "Read: 'Giant pandas live in China. They eat bamboo plants every single day. Pandas are black and white and very fluffy!' What do pandas eat?",
+                    answers: ["Pizza", "Fish", "Bamboo", "Apples"],
                     correct: 2
                 }
             ]
@@ -711,30 +711,30 @@
                     correct: 2
                 }
             ],
-            // Slot 3: Easy word problems (small numbers)
+            // Slot 3: Word problems with educational facts
             [
                 {
-                    question: "Emma has 5 apples. She gets 3 more. How many apples does Emma have now?",
+                    question: "The Colosseum in Rome, Italy is very old and famous! A tour guide shows 5 visitors the Colosseum. Then 3 more visitors join the tour. How many visitors are there now?",
                     answers: ["6", "7", "8", "9"],
                     correct: 2
                 },
                 {
-                    question: "Tom has 7 cookies. He eats 2. How many cookies are left?",
+                    question: "Giant pandas in China love to eat bamboo! A panda has 7 bamboo sticks. It eats 2 of them. How many bamboo sticks are left?",
                     answers: ["4", "5", "6", "7"],
                     correct: 1
                 },
                 {
-                    question: "There are 4 birds in a tree. 3 more birds come. How many birds are there now?",
+                    question: "Saturn is a planet with beautiful rings around it! An astronaut counts 4 big rings and 3 small rings. How many rings did the astronaut count in all?",
                     answers: ["5", "6", "7", "8"],
                     correct: 2
                 },
                 {
-                    question: "Lily has 6 crayons. She gives 2 to her friend. How many crayons does Lily have now?",
+                    question: "The Mona Lisa is a famous painting in a museum in Paris, France. On Monday, 6 children visit to see it. Then 2 children go home. How many children are still looking at the painting?",
                     answers: ["3", "4", "5", "6"],
                     correct: 1
                 },
                 {
-                    question: "Sam sees 3 red flowers and 4 yellow flowers. How many flowers in all?",
+                    question: "Butterflies have colorful wings! In a garden near the Eiffel Tower, there are 3 blue butterflies and 4 orange butterflies. How many butterflies are there in all?",
                     answers: ["5", "6", "7", "8"],
                     correct: 2
                 }
