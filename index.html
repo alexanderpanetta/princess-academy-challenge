@@ -509,7 +509,7 @@
         let selectedReadingQuestions = [];
         let selectedMathQuestions = [];
 
-        // Reading Question Pool - 25 questions (5 per slot) - WITH EDUCATIONAL FACTS
+        // Reading Question Pool - EXPANDED with Paris, Venice, Montreal, Space & Science
         const readingQuestionPool = [
             // Slot 1: Simple inference with world/art/science facts
             [
@@ -536,6 +536,41 @@
                 {
                     question: "Read: 'The Pyramids in Egypt are very, very old. They were built thousands of years ago! When people see how big they are, their eyes get wide and their mouths drop open.' How do people feel when they see the Pyramids?",
                     answers: ["Bored", "Amazed", "Angry", "Sleepy"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'In Venice, Italy, people travel on boats called gondolas instead of cars! Children laugh and wave as the gondolas float down the canals.' How do the children feel?",
+                    answers: ["Scared", "Angry", "Happy", "Tired"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Montreal is a big city in Canada where people speak French! In winter, children build snowmen and their cheeks turn red from the cold. They giggle as they play.' How do the children feel?",
+                    answers: ["Sad", "Joyful", "Angry", "Bored"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The Northern Lights dance across the sky in beautiful green and purple colors. People in Canada and other cold places look up and gasp with wonder.' How do people feel when they see the Northern Lights?",
+                    answers: ["Bored", "Amazed", "Angry", "Sleepy"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Saturn is a planet with beautiful rings made of ice and rock. Scientists get very excited when they see pictures of Saturn's rings!' How do scientists feel?",
+                    answers: ["Sad", "Bored", "Excited", "Angry"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'In Paris, people sit at little cafes and eat fresh croissants for breakfast. They smile as they watch people walk by.' How do the people at the cafe feel?",
+                    answers: ["Rushed", "Content", "Scared", "Angry"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The International Space Station floats high above Earth. Astronauts wave at the cameras and do flips in zero gravity because there is no up or down!' How do the astronauts seem to feel?",
+                    answers: ["Scared", "Bored", "Playful", "Angry"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Maple syrup comes from maple trees in Canada. When people in Montreal pour it on pancakes, they close their eyes and say mmmmm!' How do they feel about the maple syrup?",
+                    answers: ["They dislike it", "They love it", "They are scared of it", "They are bored"],
                     correct: 1
                 }
             ],
@@ -565,6 +600,41 @@
                     question: "Read: 'The rainforest is a lush place with many, many trees, plants, and animals. Lush means full of green, growing things.' What does 'lush' mean?",
                     answers: ["Empty and dry", "Full of plants", "Very cold", "Very dark"],
                     correct: 1
+                },
+                {
+                    question: "Read: 'Jupiter is an enormous planet. It is so enormous that 1,000 Earths could fit inside it!' What does 'enormous' mean?",
+                    answers: ["Tiny", "Very very big", "Very fast", "Very hot"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The canals in Venice are narrow waterways between buildings. Boats must go slowly through the narrow spaces.' What does 'narrow' mean?",
+                    answers: ["Very wide", "Not wide, thin", "Very deep", "Very long"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Montreal has freezing winters. Freezing means very, very cold - cold enough to turn water into ice!' What does 'freezing' mean?",
+                    answers: ["Very hot", "Very cold", "Very wet", "Very dry"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Stars in space are luminous. Luminous means they give off bright, shining light.' What does 'luminous' mean?",
+                    answers: ["Dark", "Bright and shining", "Very small", "Very quiet"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The Eiffel Tower is a famous landmark in Paris. A landmark is a special building or place that everyone knows.' What does 'landmark' mean?",
+                    answers: ["A small house", "A famous place everyone knows", "A type of food", "A kind of car"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Astronauts float in space because there is no gravity. Without gravity, nothing pulls you down!' What does 'gravity' mean?",
+                    answers: ["Light from stars", "The force that pulls things down", "A type of rocket", "A space suit"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The Seine River flows through Paris. To flow means to move smoothly like water.' What does 'flow' mean?",
+                    answers: ["To stop", "To move smoothly", "To freeze", "To jump"],
+                    correct: 1
                 }
             ],
             // Slot 3: Cause and effect with world/science facts
@@ -593,6 +663,41 @@
                     question: "Read: 'A caterpillar makes a cocoon so it can change into a beautiful butterfly!' Why does a caterpillar make a cocoon?",
                     answers: ["To hide from rain", "To take a short nap", "To change into a butterfly", "To eat more leaves"],
                     correct: 2
+                },
+                {
+                    question: "Read: 'Venice was built on water, so people use boats instead of cars to get around.' Why do people in Venice use boats?",
+                    answers: ["Cars are too expensive", "The city is built on water", "They don't like cars", "Boats are faster"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Montreal gets very cold in winter, so the city built underground tunnels where people can walk and stay warm.' Why did Montreal build underground tunnels?",
+                    answers: ["For fun", "To find treasure", "So people can stay warm in winter", "To hide from animals"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'The Sun is a star that gives Earth light and heat. Plants need sunlight, so they grow toward windows.' Why do plants grow toward windows?",
+                    answers: ["To see outside", "They need sunlight", "Windows are pretty", "They like glass"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Mars looks red because its soil has lots of rusty iron in it. Iron turns red when it rusts!' Why does Mars look red?",
+                    answers: ["It is very hot", "It has rusty iron", "It is painted", "The Sun is red"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The Eiffel Tower was built for a World's Fair in Paris. People came from all over the world to see it because it was so tall and new!' Why did people come to see the Eiffel Tower?",
+                    answers: ["To eat food", "Because it was tall and new", "To swim nearby", "To see animals"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Astronauts exercise every day in space because without gravity, their muscles would get weak.' Why do astronauts exercise in space?",
+                    answers: ["They are bored", "To keep muscles strong", "To fly faster", "To make videos"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'In Canada, maple trees are tapped in spring because that is when the sweet sap flows best.' Why are maple trees tapped in spring?",
+                    answers: ["Trees are prettier then", "The sap flows best then", "It is warmer", "There is no snow"],
+                    correct: 1
                 }
             ],
             // Slot 4: Main idea with world/art/science topics
@@ -620,6 +725,41 @@
                 {
                     question: "Read: 'The ocean is full of amazing creatures. Colorful coral reefs are underwater homes for fish. Whales and dolphins swim in the deep blue sea.' What is this about?",
                     answers: ["The mountains", "The desert", "The ocean", "The forest"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Paris is the capital of France. The Eiffel Tower is there. People eat croissants and crepes. The Seine River flows through the city.' What is this about?",
+                    answers: ["London", "Paris", "Rome", "Venice"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Venice is a city in Italy built on water. People ride in gondolas. There are beautiful bridges over the canals. It is very romantic!' What is this about?",
+                    answers: ["Paris", "Rome", "Venice", "Montreal"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Montreal is in Canada. People speak French there. It snows a lot in winter. They make delicious maple syrup from trees.' What is this about?",
+                    answers: ["A city in Canada", "A city in France", "A city in Italy", "A city in space"],
+                    correct: 0
+                },
+                {
+                    question: "Read: 'There are eight planets in our solar system. Mercury is closest to the Sun. Neptune is the farthest away. Earth is the only planet with people!' What is this about?",
+                    answers: ["Animals", "The planets", "The ocean", "Food"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'The Sun is a star. It gives us light and warmth. Without the Sun, Earth would be dark and cold. Plants need the Sun to grow.' What is this about?",
+                    answers: ["The Moon", "The Sun", "The stars at night", "Rain"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Rockets blast off into space. They carry astronauts and satellites. Rockets need lots of fuel to escape Earth. They go very, very fast!' What is this about?",
+                    answers: ["Airplanes", "Cars", "Rockets", "Boats"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'The Louvre is a famous museum in Paris. The Mona Lisa painting lives there. Millions of people visit every year to see beautiful art.' What is this about?",
+                    answers: ["A restaurant", "A park", "A museum", "A school"],
                     correct: 2
                 }
             ],
@@ -649,11 +789,46 @@
                     question: "Read: 'Giant pandas live in China. They eat bamboo plants every single day. Pandas are black and white and very fluffy!' What do pandas eat?",
                     answers: ["Pizza", "Fish", "Bamboo", "Apples"],
                     correct: 2
+                },
+                {
+                    question: "Read: 'The Eiffel Tower in Paris is made of iron. It was built in 1889. At night, it sparkles with thousands of lights!' When was the Eiffel Tower built?",
+                    answers: ["Last year", "In 1889", "In 2020", "Yesterday"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Gondolas are special boats in Venice. They are painted black. A gondolier uses a long pole to push the boat through the water.' What color are gondolas?",
+                    answers: ["Red", "Blue", "Black", "Yellow"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Montreal has a famous park called Mount Royal. People ski there in winter. In summer, they have picnics and fly kites.' What do people do at Mount Royal in summer?",
+                    answers: ["Ski", "Have picnics", "Build snowmen", "Ice skate"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Jupiter is the biggest planet. It has a giant red spot that is actually a huge storm! The storm has been spinning for hundreds of years.' What is Jupiter's red spot?",
+                    answers: ["A mountain", "A lake", "A huge storm", "A volcano"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'The Moon has no wind or rain. Astronaut footprints stay there forever! Neil Armstrong was the first person to walk on the Moon.' Who was the first person on the Moon?",
+                    answers: ["Neil Armstrong", "A robot", "Nobody", "A dog"],
+                    correct: 0
+                },
+                {
+                    question: "Read: 'The Seine is a river in Paris. Artists paint pictures by the river. You can take a boat ride and see the whole city!' What is the Seine?",
+                    answers: ["A mountain", "A tower", "A river", "A museum"],
+                    correct: 2
+                },
+                {
+                    question: "Read: 'Saturn has beautiful rings made of ice and rock. Saturn is the second biggest planet. It is a yellow-gold color.' What are Saturn's rings made of?",
+                    answers: ["Fire", "Ice and rock", "Clouds", "Water"],
+                    correct: 1
                 }
             ]
         ];
 
-        // Math Question Pool - 25 questions (5 per slot) - EASIER
+        // Math Question Pool - EXPANDED with Paris, Venice, Montreal, Space & Science
         const mathQuestionPool = [
             // Slot 1: Simple addition (sums up to 10)
             [
@@ -680,6 +855,31 @@
                 {
                     question: "What is 2 + 6?",
                     answers: ["6", "7", "8", "9"],
+                    correct: 2
+                },
+                {
+                    question: "What is 1 + 8?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "What is 5 + 5?",
+                    answers: ["8", "9", "10", "11"],
+                    correct: 2
+                },
+                {
+                    question: "What is 4 + 4?",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 2
+                },
+                {
+                    question: "What is 3 + 6?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "What is 2 + 5?",
+                    answers: ["5", "6", "7", "8"],
                     correct: 2
                 }
             ],
@@ -709,6 +909,31 @@
                     question: "What is 6 - 2?",
                     answers: ["2", "3", "4", "5"],
                     correct: 2
+                },
+                {
+                    question: "What is 9 - 6?",
+                    answers: ["2", "3", "4", "5"],
+                    correct: 1
+                },
+                {
+                    question: "What is 10 - 5?",
+                    answers: ["3", "4", "5", "6"],
+                    correct: 2
+                },
+                {
+                    question: "What is 8 - 4?",
+                    answers: ["3", "4", "5", "6"],
+                    correct: 1
+                },
+                {
+                    question: "What is 7 - 4?",
+                    answers: ["2", "3", "4", "5"],
+                    correct: 1
+                },
+                {
+                    question: "What is 10 - 7?",
+                    answers: ["2", "3", "4", "5"],
+                    correct: 1
                 }
             ],
             // Slot 3: Word problems with educational facts
@@ -736,6 +961,56 @@
                 {
                     question: "Butterflies have colorful wings! In a garden near the Eiffel Tower, there are 3 blue butterflies and 4 orange butterflies. How many butterflies are there in all?",
                     answers: ["5", "6", "7", "8"],
+                    correct: 2
+                },
+                {
+                    question: "In Venice, Italy, a gondolier takes 6 people for a boat ride. At the next stop, 2 people get off. How many people are still on the gondola?",
+                    answers: ["3", "4", "5", "6"],
+                    correct: 1
+                },
+                {
+                    question: "A bakery in Montreal makes delicious maple cookies! They bake 5 cookies in the morning and 4 more in the afternoon. How many cookies did they bake in all?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "The International Space Station has 4 astronauts. A rocket brings 2 more astronauts. How many astronauts are on the space station now?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 2
+                },
+                {
+                    question: "At the top of the Eiffel Tower in Paris, there are 8 tourists. 3 tourists take the elevator down. How many tourists are still at the top?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "A scientist discovers 3 new stars on Monday and 5 new stars on Tuesday. How many new stars did she discover in all?",
+                    answers: ["6", "7", "8", "9"],
+                    correct: 2
+                },
+                {
+                    question: "In a park in Montreal, there are 7 maple trees. In autumn, 3 of them have already lost their leaves. How many still have leaves?",
+                    answers: ["3", "4", "5", "6"],
+                    correct: 1
+                },
+                {
+                    question: "The Louvre museum in Paris has many rooms. A family visits 4 rooms before lunch and 5 rooms after lunch. How many rooms did they visit in all?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "On the canals of Venice, there are 9 gondolas. 4 gondolas go under a bridge. How many gondolas are not under the bridge?",
+                    answers: ["4", "5", "6", "7"],
+                    correct: 1
+                },
+                {
+                    question: "Jupiter has many moons! A child learns about 6 of Jupiter's moons on Monday and 3 more on Tuesday. How many moons did she learn about?",
+                    answers: ["7", "8", "9", "10"],
+                    correct: 2
+                },
+                {
+                    question: "A rocket needs 10 days to reach Mars. It has already traveled for 4 days. How many more days until it reaches Mars?",
+                    answers: ["4", "5", "6", "7"],
                     correct: 2
                 }
             ],
@@ -765,6 +1040,31 @@
                     question: "What number is between 6 and 8?",
                     answers: ["5", "6", "7", "9"],
                     correct: 2
+                },
+                {
+                    question: "What number comes next? 10, 9, 8, ___",
+                    answers: ["6", "7", "9", "10"],
+                    correct: 1
+                },
+                {
+                    question: "Count by 5s: 5, 10, ___",
+                    answers: ["11", "12", "15", "20"],
+                    correct: 2
+                },
+                {
+                    question: "What number is between 3 and 5?",
+                    answers: ["2", "3", "4", "6"],
+                    correct: 2
+                },
+                {
+                    question: "What comes next? 1, 2, 3, ___",
+                    answers: ["3", "4", "5", "6"],
+                    correct: 1
+                },
+                {
+                    question: "Count backwards: 7, 6, 5, ___",
+                    answers: ["3", "4", "6", "7"],
+                    correct: 1
                 }
             ],
             // Slot 5: Comparing numbers
@@ -793,6 +1093,31 @@
                     question: "Are these equal? 4 + 1 and 5",
                     answers: ["Yes, they are equal", "No, 4 + 1 is bigger", "No, 5 is bigger", "Cannot tell"],
                     correct: 0
+                },
+                {
+                    question: "Which is more: 6 cookies or 3 cookies?",
+                    answers: ["6 cookies", "3 cookies", "They are equal", "Cannot tell"],
+                    correct: 0
+                },
+                {
+                    question: "Which number is bigger: 10 or 8?",
+                    answers: ["10", "8", "They are equal", "Cannot tell"],
+                    correct: 0
+                },
+                {
+                    question: "Which is less: 2 or 5?",
+                    answers: ["2", "5", "They are equal", "Cannot tell"],
+                    correct: 0
+                },
+                {
+                    question: "Are these equal? 3 + 3 and 6",
+                    answers: ["Yes, they are equal", "No, 3 + 3 is bigger", "No, 6 is bigger", "Cannot tell"],
+                    correct: 0
+                },
+                {
+                    question: "Which number is smaller: 9 or 4?",
+                    answers: ["9", "4", "They are equal", "Cannot tell"],
+                    correct: 1
                 }
             ]
         ];
