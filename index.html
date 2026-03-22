@@ -324,6 +324,65 @@
             margin-bottom: 10px;
         }
 
+        /* Feedback Overlay */
+        .feedback-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        .feedback-overlay.active {
+            display: flex;
+        }
+
+        .feedback-overlay.correct-overlay {
+            background: rgba(50, 205, 50, 0.85);
+        }
+
+        .feedback-overlay.incorrect-overlay {
+            background: rgba(220, 20, 60, 0.75);
+        }
+
+        .feedback-card {
+            text-align: center;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .feedback-card img {
+            max-width: 350px;
+            max-height: 320px;
+            border-radius: 16px;
+            border: 5px solid white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            object-fit: contain;
+            background: #fff;
+        }
+
+        .feedback-label {
+            font-family: 'Fredoka One', cursive;
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+            margin-bottom: 12px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
         /* Medal-specific colors */
         .gold .results-panel { border-color: #FFD700; }
         .gold .medal-text { color: #DAA520; }
@@ -385,6 +444,14 @@
                     <img src="images/dwarf.png" alt="Dwarf">
                 </div>
                 <button class="btn btn-primary" onclick="startMathChallenge()">Start Math Challenge</button>
+            </div>
+        </div>
+
+        <!-- Feedback Overlay -->
+        <div id="feedback-overlay" class="feedback-overlay">
+            <div class="feedback-card">
+                <p class="feedback-label" id="feedback-label"></p>
+                <img id="feedback-image" src="" alt="Feedback">
             </div>
         </div>
 
@@ -498,6 +565,55 @@
             notes.forEach(note => {
                 playNote(note.freq, now + note.time, note.dur, 'sine', 0.25);
             });
+        }
+
+        // Good and Evil image pools
+        const goodImages = [
+            'images/good/hq720.jpg',
+            'images/good/Screenshot 2026-03-22 at 10.00.18 AM.png',
+            'images/good/Screenshot 2026-03-22 at 10.00.43 AM.png',
+            'images/good/Screenshot 2026-03-22 at 10.01.01 AM.png',
+            'images/good/Screenshot 2026-03-22 at 9.58.03 AM.png',
+            'images/good/Screenshot 2026-03-22 at 9.58.46 AM.png',
+            'images/good/Screenshot 2026-03-22 at 9.59.54 AM.png',
+        ];
+
+        const evilImages = [
+            'images/evil/cinderella.jpg',
+            'images/evil/jafar.jpg',
+            'images/evil/Screenshot 2026-03-22 at 9.53.47 AM.png',
+            'images/evil/Screenshot 2026-03-22 at 9.54.31 AM.png',
+            'images/evil/Screenshot 2026-03-22 at 9.55.55 AM.png',
+            'images/evil/Screenshot 2026-03-22 at 9.56.21 AM.png',
+            'images/evil/Screenshot 2026-03-22 at 9.59.05 AM.png',
+        ];
+
+        function getRandomImage(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function showFeedbackOverlay(isCorrect) {
+            const overlay = document.getElementById('feedback-overlay');
+            const label = document.getElementById('feedback-label');
+            const img = document.getElementById('feedback-image');
+
+            overlay.classList.remove('correct-overlay', 'incorrect-overlay');
+
+            if (isCorrect) {
+                overlay.classList.add('correct-overlay');
+                label.textContent = 'Correct!';
+                img.src = getRandomImage(goodImages);
+            } else {
+                overlay.classList.add('incorrect-overlay');
+                label.textContent = 'Not quite!';
+                img.src = getRandomImage(evilImages);
+            }
+
+            overlay.classList.add('active');
+        }
+
+        function hideFeedbackOverlay() {
+            document.getElementById('feedback-overlay').classList.remove('active');
         }
 
         // Game State
@@ -865,7 +981,7 @@
 
             // Update helper icon
             document.getElementById('helper-icon').innerHTML =
-                `<img src="images/${currentChallenge === 'reading' ? 'owl' : 'dragon'}.png" alt="Helper">`;
+                `<img src="images/${currentChallenge === 'reading' ? 'owl' : 'dwarf'}.png" alt="Helper">`;
 
             // Create answer buttons
             const container = document.getElementById('answers-container');
@@ -899,7 +1015,8 @@
             });
 
             // Update score
-            if (index === question.correct) {
+            const isCorrect = index === question.correct;
+            if (isCorrect) {
                 if (currentChallenge === 'reading') {
                     readingScore++;
                 } else {
@@ -907,8 +1024,14 @@
                 }
             }
 
-            // Move to next question after delay
+            // Show feedback overlay with good/evil image
             setTimeout(() => {
+                showFeedbackOverlay(isCorrect);
+            }, 800);
+
+            // Hide overlay and move to next question
+            setTimeout(() => {
+                hideFeedbackOverlay();
                 currentQuestion++;
 
                 if (currentQuestion >= 5) {
@@ -924,7 +1047,7 @@
                 } else {
                     loadQuestion();
                 }
-            }, 1500);
+            }, 2800);
         }
 
         function showResults() {
