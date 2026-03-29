@@ -606,7 +606,7 @@
                 <img id="pattern-feedback-image" src="" alt="Feedback">
             </div>
         </div>
-        <div class="pattern-title">The +2 Pattern: See what stays the same!</div>
+        <div class="pattern-title" id="pattern-title">The Pattern: See what stays the same!</div>
         <div class="grove" id="grove"></div>
         <div class="grove-answer-area" id="grove-answer-area">
             <input type="number" class="grove-answer-input" id="grove-answer-input"
@@ -757,6 +757,9 @@
         // ADDITION PHASE
         // ==========================
         async function startRound() {
+            // Pick a random problem each time
+            problems = shuffleProblems();
+            currentProblem = 0;
             const p = problems[currentProblem];
             correctAnswer = p.a + p.b;
             currentPhase = 'addition';
@@ -970,14 +973,29 @@
         // ======================================
         // PATTERN SECTION (interactive last tree)
         // ======================================
-        const patternData = [
-            { dim: 0, bright: 1, add: 2 },
-            { dim: 10, bright: 1, add: 2 },
-            { dim: 20, bright: 1, add: 2 },
-            { dim: 30, bright: 1, add: 2 },
-            { dim: 40, bright: 1, add: 2 },
+        // Randomize the pattern each time
+        const patternOptions = [
+            { bright: 1, add: 2 },
+            { bright: 2, add: 3 },
+            { bright: 1, add: 3 },
+            { bright: 3, add: 2 },
+            { bright: 2, add: 2 },
+            { bright: 1, add: 4 },
+            { bright: 4, add: 1 },
         ];
 
+        function generatePatternData() {
+            const pick = patternOptions[Math.floor(Math.random() * patternOptions.length)];
+            return [
+                { dim: 0, bright: pick.bright, add: pick.add },
+                { dim: 10, bright: pick.bright, add: pick.add },
+                { dim: 20, bright: pick.bright, add: pick.add },
+                { dim: 30, bright: pick.bright, add: pick.add },
+                { dim: 40, bright: pick.bright, add: pick.add },
+            ];
+        }
+
+        let patternData = generatePatternData();
         let patternCorrectAnswer = 0;
         let patternResolve = null;
         let patternAttempts = 0;
@@ -1011,7 +1029,7 @@
                 const badge = document.createElement('div');
                 badge.className = 'grove-badge';
                 badge.id = `gbadge-${idx}`;
-                badge.textContent = 'Same +2!';
+                badge.textContent = `Same +${d.add}!`;
 
                 group.appendChild(tree);
                 group.appendChild(eq);
@@ -1063,7 +1081,7 @@
                 showPatternFeedback(true);
                 await sleep(2200);
                 hidePatternFeedback();
-                narr.textContent = `Yes! It's the same +2 every time!`;
+                narr.textContent = `Yes! It's the same +${patternData[0].add} every time!`;
                 if (patternResolve) { patternResolve(true); patternResolve = null; }
             } else if (patternAttempts < MAX_ATTEMPTS) {
                 input.classList.add('incorrect');
@@ -1080,12 +1098,17 @@
                 showPatternFeedback(false);
                 await sleep(2200);
                 hidePatternFeedback();
-                narr.textContent = `The answer is ${patternCorrectAnswer}. Same +2!`;
+                narr.textContent = `The answer is ${patternCorrectAnswer}. Same +${patternData[0].add}!`;
                 if (patternResolve) { patternResolve(false); patternResolve = null; }
             }
         }
 
         async function runPattern() {
+            // Regenerate a new random pattern each time
+            patternData = generatePatternData();
+            const addVal = patternData[0].add;
+            document.getElementById('pattern-title').textContent =
+                `The +${addVal} Pattern: See what stays the same!`;
             document.getElementById('pattern-btn').style.display = 'none';
             document.getElementById('pattern-narration').textContent = '';
             hideGroveAnswer();
