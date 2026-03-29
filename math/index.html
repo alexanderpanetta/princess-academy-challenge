@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Apple Tree</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 70%, #228B22 100%);
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #2E7D32;
+            margin-bottom: 5px;
+            font-size: 32px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .subtitle { color: #1B5E20; margin-bottom: 15px; font-size: 16px; text-align: center; }
+
+        /* --- Scene --- */
+        .scene {
+            background: linear-gradient(180deg, #B3E5FC 0%, #C8E6C9 60%, #81C784 100%);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 900px;
+            min-height: 520px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .narration {
+            font-size: 20px;
+            color: #1B5E20;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            min-height: 34px;
+            background: rgba(255,255,255,0.85);
+            padding: 8px 20px;
+            border-radius: 20px;
+            z-index: 20;
+        }
+
+        /* --- Equation Bar --- */
+        .equation-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 65px;
+            z-index: 20;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+
+        .eq-part {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 14px;
+            border-radius: 14px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .eq-part.visible { opacity: 1; transform: scale(1); }
+
+        .eq-red { background: rgba(244,67,54,0.15); border: 3px solid #E53935; color: #C62828; }
+        .eq-green { background: rgba(76,175,80,0.15); border: 3px solid #43A047; color: #2E7D32; }
+        .eq-total { background: rgba(255,193,7,0.2); border: 3px solid #FFA000; color: #E65100; }
+
+        .eq-operator {
+            font-family: 'Fredoka One', cursive;
+            font-size: 32px;
+            color: #4A148C;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .eq-operator.visible { opacity: 1; }
+        .eq-mini-emoji { font-size: 22px; margin-right: 3px; }
+
+        /* --- Answer Input --- */
+        .answer-area {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            z-index: 20;
+            margin: 8px 0;
+        }
+
+        .answer-area.visible { display: flex; }
+
+        .answer-input {
+            width: 90px;
+            height: 56px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 34px;
+            text-align: center;
+            border: 4px solid #FFA000;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.95);
+            color: #E65100;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        .answer-input:focus { border-color: #FF6D00; box-shadow: 0 0 15px rgba(255,109,0,0.3); }
+        .answer-input.correct { border-color: #43A047; background: #E8F5E9; }
+        .answer-input.incorrect { border-color: #E53935; background: #FFEBEE; }
+
+        /* Hide number spinners */
+        .answer-input::-webkit-outer-spin-button,
+        .answer-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .btn-submit {
+            padding: 12px 24px;
+            font-size: 20px;
+            font-family: 'Fredoka One', cursive;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            background: linear-gradient(180deg, #FFA726, #F57C00);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245,124,0,0.4);
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-submit:hover { transform: scale(1.05); }
+
+        /* --- Tree --- */
+        .tree-area {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 100px;
+            background: linear-gradient(90deg, #5D4037, #795548, #5D4037);
+            border-radius: 5px;
+        }
+
+        .canopy {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 200px;
+            background: radial-gradient(ellipse, #43A047, #2E7D32 70%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow: inset 0 -20px 40px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .canopy.windy { animation: treeShake 0.4s ease-in-out 3; }
+
+        @keyframes treeShake {
+            0%, 100% { transform: translateX(-50%) rotate(0deg); }
+            25% { transform: translateX(-50%) rotate(2deg); }
+            75% { transform: translateX(-50%) rotate(-2deg); }
+        }
+
+        .tree-apple {
+            position: absolute;
+            font-size: 34px;
+            z-index: 5;
+        }
+
+        .tree-apple.growing { animation: growIn 0.5s ease-out forwards; }
+        .tree-apple.falling { animation: fallOff 1s ease-in forwards; }
+
+        @keyframes growIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        @keyframes fallOff {
+            0% { transform: translateX(0) translateY(0) rotate(0); opacity: 1; }
+            30% { transform: translateX(60px) translateY(-20px) rotate(30deg); opacity: 1; }
+            100% { transform: translateX(220px) translateY(160px) rotate(120deg); opacity: 0; }
+        }
+
+        .pos-0 { top: 65px; left: 30px; }
+        .pos-1 { top: 38px; left: 85px; }
+        .pos-2 { top: 48px; left: 155px; }
+        .pos-3 { top: 95px; left: 50px; }
+        .pos-4 { top: 85px; left: 120px; }
+        .pos-5 { top: 75px; left: 185px; }
+        .pos-6 { top: 125px; left: 75px; }
+        .pos-7 { top: 120px; left: 148px; }
+        .pos-8 { top: 28px; left: 125px; }
+        .pos-9 { top: 135px; left: 30px; }
+
+        /* --- Wind --- */
+        .wind-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 15;
+            overflow: hidden;
+        }
+
+        .wind-streak {
+            position: absolute;
+            height: 3px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.7);
+            opacity: 0;
+        }
+
+        .wind-streak.blowing { animation: windGust 0.8s ease-out forwards; }
+
+        @keyframes windGust {
+            0% { transform: translateX(-100px) scaleX(0.3); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateX(950px) scaleX(2); opacity: 0; }
+        }
+
+        .wind-swirl { position: absolute; font-size: 28px; opacity: 0; }
+        .wind-swirl.blowing { animation: swirlAcross 1.2s ease-out forwards; }
+
+        @keyframes swirlAcross {
+            0% { transform: translateX(-60px) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.7; }
+            100% { transform: translateX(900px) rotate(360deg); opacity: 0; }
+        }
+
+        .leaf { position: absolute; font-size: 18px; opacity: 0; }
+        .leaf.blowing { animation: leafBlow 1.5s ease-out forwards; }
+
+        @keyframes leafBlow {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translate(500px, 60px) rotate(540deg); opacity: 0; }
+        }
+
+        /* --- Feedback Overlay --- */
+        .feedback-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        .feedback-overlay.active { display: flex; }
+        .feedback-overlay.correct-bg { background: rgba(50, 205, 50, 0.85); }
+        .feedback-overlay.incorrect-bg { background: rgba(220, 20, 60, 0.75); }
+
+        .feedback-card { text-align: center; animation: popIn 0.3s ease-out; }
+
+        .feedback-card img {
+            max-width: 280px;
+            max-height: 260px;
+            border-radius: 16px;
+            border: 5px solid white;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            object-fit: contain;
+            background: #fff;
+        }
+
+        .feedback-label {
+            font-family: 'Fredoka One', cursive;
+            font-size: 34px;
+            color: white;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* --- Controls --- */
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 18px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+
+        .btn-grow { background: linear-gradient(180deg, #66BB6A, #2E7D32); color: white; box-shadow: 0 4px 15px rgba(46,125,50,0.4); }
+        .btn-wind { background: linear-gradient(180deg, #90CAF9, #1565C0); color: white; box-shadow: 0 4px 15px rgba(21,101,192,0.4); }
+        .btn-next { background: linear-gradient(180deg, #FFB74D, #F57C00); color: white; box-shadow: 0 4px 15px rgba(245,124,0,0.4); }
+
+        /* --- Pattern Section --- */
+        .pattern-section {
+            margin-top: 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .pattern-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 22px;
+            color: #2E7D32;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .grove {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            min-height: 280px;
+            padding: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mini-tree-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 140px;
+        }
+
+        .mini-tree { position: relative; width: 140px; height: 180px; }
+
+        .mini-trunk {
+            position: absolute; bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 18px; height: 55px;
+            background: #795548; border-radius: 3px;
+        }
+
+        .mini-canopy {
+            position: absolute; bottom: 45px; left: 50%;
+            transform: translateX(-50%);
+            width: 120px; height: 110px;
+            background: radial-gradient(ellipse, #43A047, #2E7D32 70%);
+            border-radius: 50%;
+        }
+
+        .mini-apple { position: absolute; font-size: 20px; z-index: 5; transition: all 0.4s; }
+        .mini-apple.dim { opacity: 0.25; }
+        .mini-apple.bright { opacity: 1; }
+        .mini-apple.new-bright { opacity: 0; animation: growIn 0.4s ease-out forwards; }
+
+        .mini-pos-0 { top: 28px; left: 18px; }
+        .mini-pos-1 { top: 18px; left: 50px; }
+        .mini-pos-2 { top: 32px; left: 82px; }
+        .mini-pos-3 { top: 50px; left: 32px; }
+        .mini-pos-4 { top: 46px; left: 64px; }
+        .mini-pos-5 { top: 60px; left: 14px; }
+        .mini-pos-6 { top: 56px; left: 92px; }
+
+        .grove-eq {
+            font-family: 'Fredoka One', cursive;
+            font-size: 17px;
+            color: #1B5E20;
+            margin-top: 8px;
+            min-height: 25px;
+        }
+
+        .grove-badge {
+            font-family: 'Fredoka One', cursive;
+            font-size: 12px;
+            color: #E91E63;
+            background: #FCE4EC;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-top: 4px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .grove-badge.visible { opacity: 1; }
+
+        /* Pattern answer input */
+        .grove-answer-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .grove-answer-area.visible { display: flex; }
+
+        .grove-answer-input {
+            width: 80px;
+            height: 48px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            text-align: center;
+            border: 3px solid #E91E63;
+            border-radius: 12px;
+            background: white;
+            color: #C2185B;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+
+        .grove-answer-input::-webkit-outer-spin-button,
+        .grove-answer-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .grove-answer-input:focus { box-shadow: 0 0 12px rgba(233,30,99,0.3); }
+        .grove-answer-input.correct { border-color: #43A047; background: #E8F5E9; }
+        .grove-answer-input.incorrect { border-color: #E53935; background: #FFEBEE; }
+
+        .grove-submit {
+            padding: 8px 20px;
+            font-size: 16px;
+            font-family: 'Fredoka One', cursive;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: linear-gradient(180deg, #F48FB1, #C2185B);
+            color: white;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .pattern-narration {
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            color: #4A148C;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 26px;
+        }
+
+        /* ============================
+           RESPONSIVE: Tablet & Phone
+           ============================ */
+        @media (max-width: 920px) {
+            body { padding: 12px; }
+            h1 { font-size: 26px; }
+            .scene { min-height: 460px; padding: 15px; }
+            .narration { font-size: 17px; padding: 6px 16px; }
+            .eq-part { font-size: 24px; padding: 6px 10px; }
+            .eq-operator { font-size: 28px; }
+            .tree-area { width: 260px; height: 270px; }
+            .canopy { width: 220px; height: 175px; bottom: 75px; }
+            .trunk { height: 90px; width: 36px; }
+            .tree-apple { font-size: 30px; }
+            .pos-0 { top: 55px; left: 25px; }
+            .pos-1 { top: 30px; left: 72px; }
+            .pos-2 { top: 40px; left: 132px; }
+            .pos-3 { top: 82px; left: 42px; }
+            .pos-4 { top: 72px; left: 100px; }
+            .pos-5 { top: 64px; left: 158px; }
+            .pos-6 { top: 108px; left: 62px; }
+            .pos-7 { top: 102px; left: 126px; }
+            .pos-8 { top: 22px; left: 105px; }
+            .pos-9 { top: 115px; left: 25px; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            h1 { font-size: 22px; }
+            .subtitle { font-size: 13px; margin-bottom: 10px; }
+            .scene { min-height: 420px; padding: 12px; border-radius: 16px; }
+            .narration { font-size: 15px; padding: 6px 12px; border-radius: 14px; }
+            .equation-bar { gap: 5px; }
+            .eq-part { font-size: 20px; padding: 5px 8px; border-radius: 10px; }
+            .eq-mini-emoji { font-size: 18px; }
+            .eq-operator { font-size: 24px; }
+            .answer-input { width: 70px; height: 48px; font-size: 28px; }
+            .btn-submit { padding: 10px 18px; font-size: 17px; }
+            .tree-area { width: 220px; height: 240px; }
+            .canopy { width: 190px; height: 150px; bottom: 65px; }
+            .trunk { height: 80px; width: 30px; }
+            .tree-apple { font-size: 26px; }
+            .pos-0 { top: 48px; left: 20px; }
+            .pos-1 { top: 26px; left: 60px; }
+            .pos-2 { top: 35px; left: 115px; }
+            .pos-3 { top: 72px; left: 35px; }
+            .pos-4 { top: 62px; left: 88px; }
+            .pos-5 { top: 55px; left: 138px; }
+            .pos-6 { top: 92px; left: 52px; }
+            .pos-7 { top: 88px; left: 110px; }
+            .pos-8 { top: 18px; left: 90px; }
+            .pos-9 { top: 100px; left: 20px; }
+            .btn { padding: 10px 22px; font-size: 15px; }
+            .feedback-card img { max-width: 200px; max-height: 180px; }
+            .feedback-label { font-size: 28px; }
+            .pattern-section { padding: 18px; }
+            .pattern-title { font-size: 18px; }
+            .grove { min-height: auto; gap: 15px; }
+            .mini-tree-group { width: 110px; }
+            .mini-tree { width: 110px; height: 150px; }
+            .mini-canopy { width: 100px; height: 90px; bottom: 40px; }
+            .mini-trunk { height: 45px; width: 14px; }
+            .mini-apple { font-size: 16px; }
+            .grove-eq { font-size: 14px; }
+        }
+
+        @media (max-width: 400px) {
+            .eq-part { font-size: 18px; padding: 4px 6px; }
+            .eq-operator { font-size: 20px; }
+            .tree-area { width: 190px; height: 210px; }
+            .canopy { width: 165px; height: 130px; bottom: 58px; }
+            .tree-apple { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <h1>The Apple Tree</h1>
+    <p class="subtitle">Watch the apples — and the math — work together!</p>
+
+    <div class="scene" id="scene">
+        <div class="narration" id="narration">Press "Grow Apples" to start!</div>
+
+        <div class="equation-bar" id="equation-bar">
+            <div class="eq-part eq-red" id="eq-red">
+                <span class="eq-mini-emoji" id="emoji-red">🍎</span>
+                <span id="eq-red-num">5</span>
+            </div>
+            <span class="eq-operator" id="eq-op1">+</span>
+            <div class="eq-part eq-green" id="eq-green">
+                <span class="eq-mini-emoji" id="emoji-green">🍏</span>
+                <span id="eq-green-num">3</span>
+            </div>
+            <span class="eq-operator" id="eq-op2">=</span>
+            <div class="eq-part eq-total" id="eq-total">
+                <span id="eq-total-num">?</span>
+            </div>
+        </div>
+
+        <div class="answer-area" id="answer-area">
+            <input type="number" class="answer-input" id="answer-input" inputmode="numeric"
+                   pattern="[0-9]*" min="0" max="99" placeholder="?">
+            <button class="btn-submit" id="submit-btn" onclick="submitAnswer()">Go!</button>
+        </div>
+
+        <div class="tree-area" id="tree-area">
+            <div class="canopy" id="canopy"></div>
+            <div class="trunk"></div>
+        </div>
+
+        <div class="wind-layer" id="wind-layer"></div>
+
+        <div id="feedback-overlay" class="feedback-overlay">
+            <div class="feedback-card">
+                <p class="feedback-label" id="feedback-label"></p>
+                <img id="feedback-image" src="" alt="Feedback">
+            </div>
+        </div>
+    </div>
+
+    <div class="controls" id="main-controls">
+        <button class="btn btn-grow" id="grow-btn" onclick="startRound()">Grow Apples</button>
+        <button class="btn btn-wind" id="wind-btn" onclick="startWindPhase()" style="display:none;">🌬️ Wind Blows!</button>
+        <button class="btn btn-next" id="next-btn" onclick="nextProblem()" style="display:none;">Next Problem</button>
+    </div>
+
+    <!-- Pattern Section -->
+    <div class="pattern-section" style="position:relative; overflow:hidden;">
+        <div id="pattern-feedback-overlay" class="feedback-overlay">
+            <div class="feedback-card">
+                <p class="feedback-label" id="pattern-feedback-label"></p>
+                <img id="pattern-feedback-image" src="" alt="Feedback">
+            </div>
+        </div>
+        <div class="pattern-title">The +2 Pattern: See what stays the same!</div>
+        <div class="grove" id="grove"></div>
+        <div class="grove-answer-area" id="grove-answer-area">
+            <input type="number" class="grove-answer-input" id="grove-answer-input"
+                   inputmode="numeric" pattern="[0-9]*" min="0" max="99" placeholder="?">
+            <button class="grove-submit" onclick="submitPatternAnswer()">Go!</button>
+        </div>
+        <div class="pattern-narration" id="pattern-narration"></div>
+        <div class="controls">
+            <button class="btn btn-grow" id="pattern-btn" onclick="runPattern()">Show the Pattern</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Images ---
+        const goodImages = [
+            '../images/good/hq720.jpg',
+            '../images/good/good_1.png', '../images/good/good_2.png',
+            '../images/good/good_3.png', '../images/good/good_4.png',
+            '../images/good/good_5.png', '../images/good/good_6.png',
+        ];
+        const evilImages = [
+            '../images/evil/cinderella.jpg', '../images/evil/jafar.jpg',
+            '../images/evil/evil_1.png', '../images/evil/evil_2.png',
+            '../images/evil/evil_3.png', '../images/evil/evil_4.png',
+            '../images/evil/evil_5.png',
+        ];
+        function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        // --- Problems ---
+        const problems = [
+            { a: 5, b: 3 }, { a: 4, b: 2 }, { a: 6, b: 3 },
+            { a: 3, b: 4 }, { a: 2, b: 5 }, { a: 7, b: 2 }, { a: 3, b: 6 },
+        ];
+        let currentProblem = 0;
+        let currentPhase = 'addition';
+        let correctAnswer = 0;
+        let attempts = 0;
+        const MAX_ATTEMPTS = 2;
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // --- Equation helpers ---
+        function resetEquation() {
+            ['eq-red','eq-green','eq-total'].forEach(id =>
+                document.getElementById(id).classList.remove('visible'));
+            document.getElementById('eq-op1').classList.remove('visible');
+            document.getElementById('eq-op1').textContent = '+';
+            document.getElementById('eq-op2').classList.remove('visible');
+            document.getElementById('eq-op2').textContent = '=';
+            document.getElementById('eq-total-num').textContent = '?';
+            document.getElementById('emoji-red').textContent = '🍎';
+            document.getElementById('emoji-green').textContent = '🍏';
+        }
+
+        function showEqPart(id) { document.getElementById(id).classList.add('visible'); }
+
+        // --- Feedback ---
+        function showFeedback(isCorrect, customLabel) {
+            const overlay = document.getElementById('feedback-overlay');
+            overlay.classList.remove('correct-bg', 'incorrect-bg');
+            document.getElementById('feedback-label').textContent =
+                customLabel || (isCorrect ? 'Correct!' : 'Not quite!');
+            document.getElementById('feedback-image').src = randomFrom(isCorrect ? goodImages : evilImages);
+            overlay.classList.add(isCorrect ? 'correct-bg' : 'incorrect-bg');
+            overlay.classList.add('active');
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedback-overlay').classList.remove('active');
+        }
+
+        // --- Wind ---
+        function fireWind() {
+            const layer = document.getElementById('wind-layer');
+            layer.innerHTML = '';
+            for (let i = 0; i < 14; i++) {
+                const s = document.createElement('div');
+                s.className = 'wind-streak';
+                s.style.top = (Math.random() * 80 + 10) + '%';
+                s.style.left = '-100px';
+                s.style.width = (50 + Math.random() * 80) + 'px';
+                s.style.animationDelay = (Math.random() * 0.5) + 's';
+                layer.appendChild(s);
+                requestAnimationFrame(() => s.classList.add('blowing'));
+            }
+            ['💨','🌬️','💨','🍃','💨','🌬️'].forEach((em, i) => {
+                const sw = document.createElement('span');
+                sw.className = 'wind-swirl';
+                sw.textContent = em;
+                sw.style.top = (15 + Math.random() * 55) + '%';
+                sw.style.left = '-60px';
+                sw.style.fontSize = (26 + Math.random() * 22) + 'px';
+                sw.style.animationDelay = (i * 0.12 + Math.random() * 0.2) + 's';
+                layer.appendChild(sw);
+                requestAnimationFrame(() => sw.classList.add('blowing'));
+            });
+            for (let i = 0; i < 10; i++) {
+                const lf = document.createElement('span');
+                lf.className = 'leaf';
+                lf.textContent = '🍃';
+                lf.style.top = (25 + Math.random() * 45) + '%';
+                lf.style.left = (5 + Math.random() * 35) + '%';
+                lf.style.animationDelay = (0.1 + Math.random() * 0.7) + 's';
+                lf.style.animationDuration = (1 + Math.random() * 0.8) + 's';
+                layer.appendChild(lf);
+                requestAnimationFrame(() => lf.classList.add('blowing'));
+            }
+        }
+
+        // --- Answer input ---
+        function showAnswerInput() {
+            const area = document.getElementById('answer-area');
+            const input = document.getElementById('answer-input');
+            input.value = '';
+            input.className = 'answer-input';
+            area.classList.add('visible');
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function hideAnswerInput() {
+            document.getElementById('answer-area').classList.remove('visible');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (document.getElementById('answer-area').classList.contains('visible')) {
+                    submitAnswer();
+                } else if (document.getElementById('grove-answer-area').classList.contains('visible')) {
+                    submitPatternAnswer();
+                }
+            }
+        });
+
+        // ==========================
+        // ADDITION PHASE
+        // ==========================
+        async function startRound() {
+            const p = problems[currentProblem];
+            correctAnswer = p.a + p.b;
+            currentPhase = 'addition';
+            const canopy = document.getElementById('canopy');
+            canopy.innerHTML = '';
+            document.getElementById('wind-layer').innerHTML = '';
+            document.getElementById('grow-btn').style.display = 'none';
+            document.getElementById('wind-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            hideAnswerInput();
+            resetEquation();
+
+            // Show red apples
+            attempts = 0;
+            document.getElementById('narration').textContent = `The tree has ${p.a} red apples...`;
+            document.getElementById('eq-red-num').textContent = p.a;
+            showEqPart('eq-red');
+
+            for (let i = 0; i < p.a; i++) {
+                const apple = document.createElement('span');
+                apple.className = `tree-apple pos-${i} growing`;
+                apple.textContent = '🍎';
+                apple.dataset.type = 'original';
+                canopy.appendChild(apple);
+                await sleep(350);
+            }
+            await sleep(700);
+
+            // Show equation with ? — no green apples yet
+            document.getElementById('narration').textContent = `${p.b} more green apples want to grow! How many will there be?`;
+            showEqPart('eq-op1');
+            await sleep(200);
+            document.getElementById('eq-green-num').textContent = p.b;
+            showEqPart('eq-green');
+            await sleep(200);
+            showEqPart('eq-op2');
+            await sleep(200);
+            document.getElementById('eq-total-num').textContent = '?';
+            showEqPart('eq-total');
+
+            showAnswerInput();
+        }
+
+        // ==========================
+        // SUBMIT
+        // ==========================
+        async function submitAnswer() {
+            const input = document.getElementById('answer-input');
+            const userAnswer = parseInt(input.value, 10);
+            if (isNaN(userAnswer)) { input.focus(); return; }
+
+            attempts++;
+            const isCorrect = userAnswer === correctAnswer;
+
+            if (isCorrect) {
+                input.classList.add('correct');
+                hideAnswerInput();
+                showFeedback(true);
+                await sleep(2200);
+                hideFeedback();
+                if (currentPhase === 'addition') { await revealAdditionAnswer(); }
+                else { await revealSubtractionAnswer(); }
+            } else if (attempts < MAX_ATTEMPTS) {
+                // First wrong — villain lingers with "ONE MORE TRY"
+                input.classList.add('incorrect');
+                showFeedback(false, 'ONE MORE TRY!');
+                await sleep(3500);
+                hideFeedback();
+                input.value = '';
+                input.classList.remove('incorrect');
+                document.getElementById('narration').textContent = `Try again — you got this!`;
+                input.focus();
+            } else {
+                // Second wrong — show villain, then reveal the answer
+                input.classList.add('incorrect');
+                hideAnswerInput();
+                showFeedback(false);
+                await sleep(2200);
+                hideFeedback();
+                document.getElementById('narration').textContent =
+                    `The answer is ${correctAnswer}. Let's see!`;
+                await sleep(800);
+                if (currentPhase === 'addition') { await revealAdditionAnswer(); }
+                else { await revealSubtractionAnswer(); }
+            }
+        }
+
+        // ==========================
+        // REVEAL: Addition
+        // ==========================
+        async function revealAdditionAnswer() {
+            const p = problems[currentProblem];
+            const total = p.a + p.b;
+            const canopy = document.getElementById('canopy');
+
+            document.getElementById('narration').textContent = `Watch — ${p.b} green apples are growing!`;
+
+            for (let i = 0; i < p.b; i++) {
+                const apple = document.createElement('span');
+                apple.className = `tree-apple pos-${p.a + i} growing`;
+                apple.textContent = '🍏';
+                apple.dataset.type = 'added';
+                canopy.appendChild(apple);
+                await sleep(400);
+            }
+            await sleep(500);
+
+            document.getElementById('eq-total-num').textContent = total;
+            document.getElementById('narration').textContent = `🍎 ${p.a} + 🍏 ${p.b} = ${total} apples!`;
+
+            await sleep(800);
+            document.getElementById('wind-btn').style.display = 'inline-block';
+        }
+
+        // ==========================
+        // WIND PHASE
+        // ==========================
+        async function startWindPhase() {
+            const p = problems[currentProblem];
+            const total = p.a + p.b;
+            currentPhase = 'subtraction';
+            correctAnswer = p.a;
+            attempts = 0;
+
+            document.getElementById('wind-btn').style.display = 'none';
+            resetEquation();
+            await sleep(200);
+
+            document.getElementById('eq-red-num').textContent = total;
+            document.getElementById('emoji-red').textContent = '🍎🍏';
+            showEqPart('eq-red');
+            await sleep(300);
+            document.getElementById('eq-op1').textContent = '−';
+            showEqPart('eq-op1');
+            await sleep(200);
+            document.getElementById('eq-green-num').textContent = p.b;
+            document.getElementById('emoji-green').textContent = '🍏';
+            showEqPart('eq-green');
+            await sleep(200);
+            showEqPart('eq-op2');
+            await sleep(200);
+            document.getElementById('eq-total-num').textContent = '?';
+            showEqPart('eq-total');
+
+            document.getElementById('narration').textContent =
+                `The wind will blow away ${p.b} green apples. How many will be left?`;
+
+            showAnswerInput();
+        }
+
+        // ==========================
+        // REVEAL: Subtraction
+        // ==========================
+        async function revealSubtractionAnswer() {
+            const p = problems[currentProblem];
+            const total = p.a + p.b;
+            const canopy = document.getElementById('canopy');
+
+            document.getElementById('narration').textContent = `A gust of wind is coming...`;
+            await sleep(600);
+
+            fireWind();
+            canopy.classList.add('windy');
+            document.getElementById('narration').textContent =
+                `The wind blows away the ${p.b} green apples!`;
+
+            await sleep(400);
+            const added = canopy.querySelectorAll('[data-type="added"]');
+            for (let i = 0; i < added.length; i++) {
+                added[i].classList.add('falling');
+                await sleep(300);
+            }
+            await sleep(800);
+            added.forEach(a => a.remove());
+            canopy.classList.remove('windy');
+
+            document.getElementById('eq-total-num').textContent = p.a;
+            document.getElementById('narration').textContent =
+                `${total} − ${p.b} = ${p.a}! The red apples were there all along!`;
+
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        // ==========================
+        // NEXT
+        // ==========================
+        function nextProblem() {
+            currentProblem = (currentProblem + 1) % problems.length;
+            document.getElementById('canopy').innerHTML = '';
+            document.getElementById('wind-layer').innerHTML = '';
+            resetEquation();
+            hideAnswerInput();
+            document.getElementById('narration').textContent = 'Press "Grow Apples" for the next one!';
+            document.getElementById('grow-btn').style.display = 'inline-block';
+            document.getElementById('wind-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        // ======================================
+        // PATTERN SECTION (interactive last tree)
+        // ======================================
+        const patternData = [
+            { dim: 0, bright: 1, add: 2 },
+            { dim: 10, bright: 1, add: 2 },
+            { dim: 20, bright: 1, add: 2 },
+            { dim: 30, bright: 1, add: 2 },
+            { dim: 40, bright: 1, add: 2 },
+        ];
+
+        let patternCorrectAnswer = 0;
+        let patternResolve = null;
+        let patternAttempts = 0;
+
+        function buildGrove() {
+            const container = document.getElementById('grove');
+            container.innerHTML = '';
+            patternData.forEach((d, idx) => {
+                const group = document.createElement('div');
+                group.className = 'mini-tree-group';
+                group.id = `ggroup-${idx}`;
+
+                const tree = document.createElement('div');
+                tree.className = 'mini-tree';
+
+                const canopy = document.createElement('div');
+                canopy.className = 'mini-canopy';
+                canopy.id = `gcanopy-${idx}`;
+                tree.appendChild(canopy);
+
+                const trunk = document.createElement('div');
+                trunk.className = 'mini-trunk';
+                tree.appendChild(trunk);
+
+                const num = d.dim + d.bright;
+                const eq = document.createElement('div');
+                eq.className = 'grove-eq';
+                eq.id = `geq-${idx}`;
+                eq.textContent = `${num} + ${d.add} = ?`;
+
+                const badge = document.createElement('div');
+                badge.className = 'grove-badge';
+                badge.id = `gbadge-${idx}`;
+                badge.textContent = 'Same +2!';
+
+                group.appendChild(tree);
+                group.appendChild(eq);
+                group.appendChild(badge);
+                container.appendChild(group);
+            });
+        }
+
+        function showGroveAnswer() {
+            const area = document.getElementById('grove-answer-area');
+            const input = document.getElementById('grove-answer-input');
+            input.value = '';
+            input.className = 'grove-answer-input';
+            area.classList.add('visible');
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function hideGroveAnswer() {
+            document.getElementById('grove-answer-area').classList.remove('visible');
+        }
+
+        function showPatternFeedback(isCorrect, customLabel) {
+            const overlay = document.getElementById('pattern-feedback-overlay');
+            overlay.classList.remove('correct-bg', 'incorrect-bg');
+            document.getElementById('pattern-feedback-label').textContent =
+                customLabel || (isCorrect ? 'Correct!' : 'Not quite!');
+            document.getElementById('pattern-feedback-image').src =
+                randomFrom(isCorrect ? goodImages : evilImages);
+            overlay.classList.add(isCorrect ? 'correct-bg' : 'incorrect-bg');
+            overlay.classList.add('active');
+        }
+
+        function hidePatternFeedback() {
+            document.getElementById('pattern-feedback-overlay').classList.remove('active');
+        }
+
+        async function submitPatternAnswer() {
+            const input = document.getElementById('grove-answer-input');
+            const userAnswer = parseInt(input.value, 10);
+            if (isNaN(userAnswer)) { input.focus(); return; }
+
+            patternAttempts++;
+            const isCorrect = userAnswer === patternCorrectAnswer;
+            const narr = document.getElementById('pattern-narration');
+
+            if (isCorrect) {
+                input.classList.add('correct');
+                hideGroveAnswer();
+                showPatternFeedback(true);
+                await sleep(2200);
+                hidePatternFeedback();
+                narr.textContent = `Yes! It's the same +2 every time!`;
+                if (patternResolve) { patternResolve(true); patternResolve = null; }
+            } else if (patternAttempts < MAX_ATTEMPTS) {
+                input.classList.add('incorrect');
+                showPatternFeedback(false, 'ONE MORE TRY!');
+                await sleep(3500);
+                hidePatternFeedback();
+                narr.textContent = `Try again — you got this!`;
+                input.value = '';
+                input.classList.remove('incorrect');
+                input.focus();
+            } else {
+                input.classList.add('incorrect');
+                hideGroveAnswer();
+                showPatternFeedback(false);
+                await sleep(2200);
+                hidePatternFeedback();
+                narr.textContent = `The answer is ${patternCorrectAnswer}. Same +2!`;
+                if (patternResolve) { patternResolve(false); patternResolve = null; }
+            }
+        }
+
+        async function runPattern() {
+            document.getElementById('pattern-btn').style.display = 'none';
+            document.getElementById('pattern-narration').textContent = '';
+            hideGroveAnswer();
+            buildGrove();
+
+            // How many to auto-reveal vs. ask
+            const autoRevealCount = 3; // reveal first 3, ask her for 4th and 5th
+
+            for (let idx = 0; idx < patternData.length; idx++) {
+                const d = patternData[idx];
+                const canopy = document.getElementById(`gcanopy-${idx}`);
+                canopy.innerHTML = '';
+                const num = d.dim + d.bright;
+                const result = num + d.add;
+                const isLast = idx >= autoRevealCount;
+
+                // Dim apples (tens)
+                const dimCount = Math.min(d.dim, 7);
+                for (let i = 0; i < dimCount; i++) {
+                    const apple = document.createElement('span');
+                    apple.className = `mini-apple mini-pos-${i} dim`;
+                    apple.textContent = '🍎';
+                    canopy.appendChild(apple);
+                }
+                if (d.dim > 0) await sleep(250);
+
+                // Bright ones apples
+                for (let i = 0; i < d.bright; i++) {
+                    const apple = document.createElement('span');
+                    apple.className = 'mini-apple bright';
+                    apple.textContent = '🍎';
+                    apple.style.position = 'absolute';
+                    apple.style.top = '42px';
+                    apple.style.left = `${45 + i * 24}px`;
+                    apple.style.fontSize = '24px';
+                    canopy.appendChild(apple);
+                }
+                await sleep(350);
+
+                if (isLast) {
+                    // Pause here — ask the player
+                    const prompt = idx === autoRevealCount
+                        ? `You see the pattern! What is ${num} + ${d.add}?`
+                        : `One more! What is ${num} + ${d.add}?`;
+                    document.getElementById('pattern-narration').textContent = prompt;
+                    patternCorrectAnswer = result;
+                    patternAttempts = 0;
+
+                    showGroveAnswer();
+
+                    // Wait for her answer
+                    const wasCorrect = await new Promise(resolve => { patternResolve = resolve; });
+
+                    await sleep(600);
+
+                    // Now reveal the green apples
+                    for (let i = 0; i < d.add; i++) {
+                        const apple = document.createElement('span');
+                        apple.className = 'mini-apple new-bright';
+                        apple.textContent = '🍏';
+                        apple.style.position = 'absolute';
+                        apple.style.top = '42px';
+                        apple.style.left = `${45 + (d.bright + i) * 24}px`;
+                        apple.style.fontSize = '24px';
+                        canopy.appendChild(apple);
+                        await sleep(350);
+                    }
+
+                    document.getElementById(`geq-${idx}`).textContent = `${num} + ${d.add} = ${result}`;
+                    document.getElementById(`gbadge-${idx}`).classList.add('visible');
+
+                } else {
+                    // Auto-reveal
+                    for (let i = 0; i < d.add; i++) {
+                        const apple = document.createElement('span');
+                        apple.className = 'mini-apple new-bright';
+                        apple.textContent = '🍏';
+                        apple.style.position = 'absolute';
+                        apple.style.top = '42px';
+                        apple.style.left = `${45 + (d.bright + i) * 24}px`;
+                        apple.style.fontSize = '24px';
+                        canopy.appendChild(apple);
+                        await sleep(300);
+                    }
+
+                    await sleep(250);
+                    document.getElementById(`geq-${idx}`).textContent = `${num} + ${d.add} = ${result}`;
+                    document.getElementById(`gbadge-${idx}`).classList.add('visible');
+                    await sleep(500);
+                }
+            }
+
+            document.getElementById('pattern-btn').style.display = 'inline-block';
+            document.getElementById('pattern-btn').textContent = 'Replay';
+        }
+
+        buildGrove();
+    </script>
+</body>
+</html>

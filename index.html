@@ -625,145 +625,145 @@
         let selectedReadingQuestions = [];
         let selectedMathQuestions = [];
 
-        // Reading Question Pool - 25 questions (5 per slot) - SLIGHTLY CHALLENGING
+        // Reading Question Pool - 25 questions (5 per slot) - MODERATELY CHALLENGING
         const readingQuestionPool = [
-            // Slot 1: Simple inference (very clear clues)
+            // Slot 1: Inference with richer vocabulary
             [
                 {
-                    question: "Read: 'Tom smiled when he saw the birthday cake.' How did Tom feel?",
+                    question: "Read: 'Tom beamed with delight when he saw the birthday cake.' How did Tom feel?",
                     answers: ["Sad", "Happy", "Scared", "Angry"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The puppy wagged its tail when Sara came home.' How does the puppy feel?",
-                    answers: ["Angry", "Scared", "Happy", "Sleepy"],
+                    question: "Read: 'The puppy wagged its tail with enthusiasm when Sara came home.' What does 'enthusiasm' mean here?",
+                    answers: ["Anger", "Fear", "Great excitement", "Sleepiness"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Mom put on her coat and boots. It was snowing outside.' What is the weather like?",
-                    answers: ["Sunny", "Rainy", "Snowy", "Windy"],
-                    correct: 2
-                },
-                {
-                    question: "Read: 'Lily rubbed her eyes and yawned.' How does Lily feel?",
-                    answers: ["Hungry", "Tired", "Happy", "Cold"],
+                    question: "Read: 'Mom bundled up in her coat and boots. A blizzard was howling outside.' What is a 'blizzard'?",
+                    answers: ["A sunny day", "A big snowstorm", "A gentle rain", "A light breeze"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'Jake frowned when he dropped his ice cream.' How did Jake feel?",
-                    answers: ["Happy", "Excited", "Sad", "Sleepy"],
+                    question: "Read: 'Lily rubbed her eyes and yawned. She was completely exhausted.' What does 'exhausted' mean?",
+                    answers: ["Hungry", "Very tired", "Happy", "Cold"],
+                    correct: 1
+                },
+                {
+                    question: "Read: 'Jake grimaced when he dropped his ice cream on the pavement.' What does 'grimaced' mean?",
+                    answers: ["Smiled", "Laughed", "Made an unhappy face", "Fell asleep"],
                     correct: 2
                 }
             ],
-            // Slot 2: Easy vocabulary (common words)
+            // Slot 2: Vocabulary with harder words
             [
                 {
-                    question: "Read: 'The tiny ant was very small.' What does 'tiny' mean?",
+                    question: "Read: 'The miniature ant was almost invisible.' What does 'miniature' mean?",
                     answers: ["Big", "Very small", "Fast", "Loud"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The happy girl was smiling all day.' What does 'happy' mean the opposite of?",
-                    answers: ["Glad", "Joyful", "Sad", "Cheerful"],
+                    question: "Read: 'The cheerful girl was grinning all day.' What is the opposite of 'cheerful'?",
+                    answers: ["Glad", "Joyful", "Gloomy", "Delighted"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'The loud thunder scared the cat.' What does 'loud' mean?",
-                    answers: ["Quiet", "Not quiet, makes a big sound", "Soft", "Small"],
+                    question: "Read: 'The tremendous thunder startled the cat.' What does 'tremendous' mean?",
+                    answers: ["Tiny", "Very big or powerful", "Soft", "Slow"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The fast rabbit ran quickly.' What does 'fast' mean?",
+                    question: "Read: 'The swift rabbit darted across the meadow.' What does 'swift' mean?",
                     answers: ["Slow", "Quick", "Tired", "Big"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The brave knight was not scared.' What does 'brave' mean?",
-                    answers: ["Scared", "Not scared, courageous", "Tired", "Sad"],
+                    question: "Read: 'The courageous knight ventured into the dark cave.' What does 'courageous' mean?",
+                    answers: ["Scared", "Brave", "Tired", "Sad"],
                     correct: 1
                 }
             ],
-            // Slot 3: Simple cause and effect
+            // Slot 3: Cause and effect with richer language
             [
                 {
-                    question: "Read: 'It rained, so we stayed inside.' Why did we stay inside?",
-                    answers: ["It was sunny", "It rained", "We were tired", "It was bedtime"],
+                    question: "Read: 'It was pouring, so we had to remain indoors.' What does 'remain' mean here?",
+                    answers: ["Run outside", "Stay", "Leave", "Sleep"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'Sam was hungry, so he ate a sandwich.' Why did Sam eat?",
-                    answers: ["He was bored", "He was hungry", "He was tired", "He was cold"],
+                    question: "Read: 'Sam was famished, so he devoured a sandwich.' What does 'famished' mean?",
+                    answers: ["Bored", "Very hungry", "Tired", "Cold"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'The plant grew tall because it got water and sun.' What helped the plant grow?",
-                    answers: ["Water and sun", "Only water", "Nothing", "Wind"],
+                    question: "Read: 'The plant flourished because it received plenty of water and sunshine.' What does 'flourished' mean?",
+                    answers: ["Grew well", "Died", "Stayed the same", "Fell over"],
                     correct: 0
                 },
                 {
-                    question: "Read: 'Emma fell asleep because she was tired.' Why did Emma fall asleep?",
-                    answers: ["She was hungry", "She was happy", "She was tired", "She was bored"],
+                    question: "Read: 'Emma dozed off because she was weary from the journey.' What does 'weary' mean?",
+                    answers: ["Hungry", "Happy", "Tired", "Bored"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'The snowman melted because the sun came out.' What made the snowman melt?",
-                    answers: ["The rain", "The sun", "The wind", "The snow"],
+                    question: "Read: 'The snowman gradually melted when the temperature rose.' What does 'gradually' mean?",
+                    answers: ["All at once", "Slowly, bit by bit", "Never", "Loudly"],
                     correct: 1
                 }
             ],
-            // Slot 4: What is the story about?
+            // Slot 4: Main idea with richer language
             [
                 {
-                    question: "Read: 'Cats like to sleep. Cats like to play. Cats make good pets.' What is this about?",
+                    question: "Read: 'Felines enjoy napping. They also love to pounce and play. They make wonderful companions.' What are 'felines'?",
                     answers: ["Dogs", "Birds", "Cats", "Fish"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'I brush my teeth every morning. I brush them at night too. Clean teeth are healthy!' What is this about?",
-                    answers: ["Eating food", "Brushing teeth", "Going to bed", "Waking up"],
+                    question: "Read: 'Proper dental hygiene is important. I brush every morning and night.' What does 'hygiene' mean here?",
+                    answers: ["Eating food", "Keeping clean and healthy", "Going to bed", "Playing outside"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'We went to the beach. We played in the sand. We swam in the water.' Where did they go?",
-                    answers: ["The park", "The zoo", "The beach", "The store"],
+                    question: "Read: 'We visited the shore. We built sculptures in the sand and waded in the surf.' What does 'shore' mean?",
+                    answers: ["The park", "The zoo", "The edge of the ocean", "The store"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Birds can fly. Birds have feathers. Birds build nests.' What is this about?",
-                    answers: ["Fish", "Dogs", "Cats", "Birds"],
+                    question: "Read: 'Birds migrate south for the winter. They have plumage and build nests.' What does 'plumage' mean?",
+                    answers: ["Fins", "Fur", "Claws", "Feathers"],
                     correct: 3
                 },
                 {
-                    question: "Read: 'In fall, leaves change color. They turn red, orange, and yellow. Then they fall off the trees.' What season is this about?",
-                    answers: ["Summer", "Winter", "Spring", "Fall"],
+                    question: "Read: 'In autumn, foliage changes color — crimson, amber, and gold — then drifts to the ground.' What is 'foliage'?",
+                    answers: ["Flowers", "Rocks", "Snow", "Leaves"],
                     correct: 3
                 }
             ],
-            // Slot 5: Short story comprehension
+            // Slot 5: Story comprehension with richer language
             [
                 {
-                    question: "Read: 'Ben has a dog named Max. Max is brown. Ben loves to play fetch with Max.' What color is Max?",
-                    answers: ["White", "Black", "Brown", "Gray"],
+                    question: "Read: 'Ben has a loyal companion named Max. Max has a chestnut coat. They adore playing fetch.' What color is 'chestnut'?",
+                    answers: ["White", "Black", "Reddish-brown", "Gray"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Lily went to the store. She bought apples and milk. Then she went home.' What did Lily buy?",
-                    answers: ["Bread and eggs", "Apples and milk", "Cookies and juice", "Bananas and water"],
+                    question: "Read: 'Lily visited the market to purchase apples and milk, then she headed home.' What does 'purchase' mean?",
+                    answers: ["Throw away", "Buy", "Cook", "Hide"],
                     correct: 1
                 },
                 {
-                    question: "Read: 'It was Anna's birthday. She had a pink cake. She got lots of presents.' What color was the cake?",
-                    answers: ["Blue", "Green", "Pink", "Yellow"],
+                    question: "Read: 'It was Anna's birthday celebration. She had a magnificent pink cake and received numerous presents.' What does 'numerous' mean?",
+                    answers: ["Zero", "One", "A lot of", "Tiny"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Tom went to the zoo. He saw lions and monkeys. The monkeys were his favorite.' What was Tom's favorite animal?",
-                    answers: ["Lions", "Elephants", "Monkeys", "Tigers"],
+                    question: "Read: 'Tom observed the animals at the zoo. The primates were his absolute favorite.' What are 'primates'?",
+                    answers: ["Lions", "Fish", "Monkeys and apes", "Tigers"],
                     correct: 2
                 },
                 {
-                    question: "Read: 'Mom made pancakes for breakfast. She put butter and syrup on them. They were yummy!' What did Mom make?",
-                    answers: ["Eggs", "Toast", "Pancakes", "Cereal"],
+                    question: "Read: 'Mom prepared a scrumptious batch of pancakes for breakfast with butter and syrup.' What does 'scrumptious' mean?",
+                    answers: ["Ugly", "Scary", "Delicious", "Cold"],
                     correct: 2
                 }
             ]
