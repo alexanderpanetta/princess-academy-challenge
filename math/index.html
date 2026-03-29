@@ -636,10 +636,23 @@
         function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
         // --- Problems ---
-        const problems = [
+        const problemPool = [
             { a: 5, b: 3 }, { a: 4, b: 2 }, { a: 6, b: 3 },
             { a: 3, b: 4 }, { a: 2, b: 5 }, { a: 7, b: 2 }, { a: 3, b: 6 },
+            { a: 5, b: 4 }, { a: 6, b: 2 }, { a: 4, b: 3 },
         ];
+
+        // Shuffle and pick problems
+        function shuffleProblems() {
+            const shuffled = [...problemPool];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        let problems = shuffleProblems();
         let currentProblem = 0;
         let currentPhase = 'addition';
         let correctAnswer = 0;
@@ -756,9 +769,10 @@
             hideAnswerInput();
             resetEquation();
 
-            // Show red apples
+            // Set narration once for the whole addition phase
             attempts = 0;
-            document.getElementById('narration').textContent = `The tree has ${p.a} red apples...`;
+            document.getElementById('narration').textContent =
+                `The tree has ${p.a} apples. ${p.b} more want to grow! How many will there be?`;
             document.getElementById('eq-red-num').textContent = p.a;
             showEqPart('eq-red');
 
@@ -772,8 +786,7 @@
             }
             await sleep(700);
 
-            // Show equation with ? — no green apples yet
-            document.getElementById('narration').textContent = `${p.b} more green apples want to grow! How many will there be?`;
+            // Show rest of equation — narration stays the same
             showEqPart('eq-op1');
             await sleep(200);
             document.getElementById('eq-green-num').textContent = p.b;
@@ -814,7 +827,15 @@
                 hideFeedback();
                 input.value = '';
                 input.classList.remove('incorrect');
-                document.getElementById('narration').textContent = `Try again — you got this!`;
+                // Restore the original narration for this phase
+                const p = problems[currentProblem];
+                if (currentPhase === 'addition') {
+                    document.getElementById('narration').textContent =
+                        `The tree has ${p.a} apples. ${p.b} more want to grow! How many will there be?`;
+                } else {
+                    document.getElementById('narration').textContent =
+                        `The wind will blow away ${p.b} apples. How many will be left?`;
+                }
                 input.focus();
             } else {
                 // Second wrong — show villain, then reveal the answer
@@ -839,7 +860,7 @@
             const total = p.a + p.b;
             const canopy = document.getElementById('canopy');
 
-            document.getElementById('narration').textContent = `Watch — ${p.b} green apples are growing!`;
+            document.getElementById('narration').textContent = `Watch — ${p.b} more apples are growing!`;
 
             for (let i = 0; i < p.b; i++) {
                 const apple = document.createElement('span');
@@ -852,7 +873,7 @@
             await sleep(500);
 
             document.getElementById('eq-total-num').textContent = total;
-            document.getElementById('narration').textContent = `🍎 ${p.a} + 🍏 ${p.b} = ${total} apples!`;
+            document.getElementById('narration').textContent = `${p.a} + ${p.b} = ${total} apples!`;
 
             await sleep(800);
             document.getElementById('wind-btn').style.display = 'inline-block';
@@ -889,7 +910,7 @@
             showEqPart('eq-total');
 
             document.getElementById('narration').textContent =
-                `The wind will blow away ${p.b} green apples. How many will be left?`;
+                `The wind will blow away ${p.b} apples. How many will be left?`;
 
             showAnswerInput();
         }
@@ -908,7 +929,7 @@
             fireWind();
             canopy.classList.add('windy');
             document.getElementById('narration').textContent =
-                `The wind blows away the ${p.b} green apples!`;
+                `The wind blows away ${p.b} apples!`;
 
             await sleep(400);
             const added = canopy.querySelectorAll('[data-type="added"]');
@@ -922,7 +943,7 @@
 
             document.getElementById('eq-total-num').textContent = p.a;
             document.getElementById('narration').textContent =
-                `${total} − ${p.b} = ${p.a}! The red apples were there all along!`;
+                `${total} − ${p.b} = ${p.a}! The same apples were there all along!`;
 
             document.getElementById('next-btn').style.display = 'inline-block';
         }
@@ -931,7 +952,11 @@
         // NEXT
         // ==========================
         function nextProblem() {
-            currentProblem = (currentProblem + 1) % problems.length;
+            currentProblem++;
+            if (currentProblem >= problems.length) {
+                problems = shuffleProblems();
+                currentProblem = 0;
+            }
             document.getElementById('canopy').innerHTML = '';
             document.getElementById('wind-layer').innerHTML = '';
             resetEquation();
