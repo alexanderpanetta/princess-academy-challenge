@@ -19,32 +19,49 @@ option sets, question for question. Only the wording changed.
 The reading round could not be translated word for word, because the whole
 point of those questions is the vocabulary. Each English target word was
 replaced with an Italian word of comparable difficulty inside the same plot
-passage:
+passage.
 
-| English    | Italiano                  |
-|------------|---------------------------|
-| preyed on  | predavano                 |
-| barrier    | barriera                  |
-| banish     | bandire                   |
-| rebellious | ribelle                   |
-| vocalist   | solista                   |
-| disquieted | turbata                   |
-| shame      | vergogna                  |
-| enraged    | andare su tutte le furie  |
-| minion     | sgherro                   |
-| trance     | trance                    |
-| impostor   | impostore                 |
-| amassed    | accumulare                |
-| destitution| miseria                   |
-| guilt      | senso di colpa            |
-| expose     | smascherare               |
-| lyrics     | testo                     |
-| sabotage   | sabotare                  |
-| lured      | attirare                  |
-| betrayed   | tradite                   |
-| confronted | affrontò                  |
-| improvised | improvvisata              |
-| repentant  | pentito                   |
+**The Italian was deliberately pitched down in August 2026.** The first pass
+read like written Italian rather than spoken Italian and was too hard. Three
+things changed:
+
+1. **No more passato remoto.** `formarono`, `fece`, `scrissero`, `disse` and
+   friends are literary and are not how the language is actually spoken. All
+   of it is now passato prossimo or imperfetto: `hanno formato`, `ha fatto`,
+   `hanno scritto`, `ha detto`. This was the single biggest fix.
+2. **Everyday target words.** The most literary choices were swapped out --
+   `sgherro` became `servo`, `turbata` became `inquieta`, `predavano` became
+   the concrete noun `prede`, `accumulare` became `radunare`.
+3. **`Cosa significa` became `Cosa vuol dire`**, and sentences were shortened.
+
+Current target words:
+
+| English    | Italiano             |
+|------------|----------------------|
+| preyed on  | prede                |
+| barrier    | barriera             |
+| banish     | bandire              |
+| drained    | svuotate             |
+| rebellious | ribelle              |
+| disquieted | inquieta             |
+| shame      | vergognarsi          |
+| enraged    | furioso              |
+| minion     | servo                |
+| trance     | incantato            |
+| impostor   | impostore            |
+| amassed    | radunare             |
+| destitution| miseria              |
+| guilt      | sentirsi in colpa    |
+| expose     | smascherare          |
+| lyrics     | testo                |
+| shelved    | mettere da parte     |
+| lured      | attirare             |
+| betrayed   | tradite              |
+| confronted | affrontare           |
+| disguised  | travestirsi          |
+| revealing  | mostrare             |
+| improvised | improvvisata         |
+| repentant  | pentito              |
 
 Character and group names (Rumi, Mira, Zoey, Jinu, Celine, Gwi-Ma, Huntrix,
 Saja Boys, Honmoon) are left as they are.

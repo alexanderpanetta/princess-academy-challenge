@@ -11,13 +11,14 @@ Everything lives in `index.html`. No build step, no dependencies.
 
 Two banks near the top of the `<script>` block:
 
-- `READING_POOL` -- 10 slots x 3 variants = 30 questions
-- `MATH_POOL`    -- 10 slots x 3 variants = 30 questions
+- `READING_POOL` -- 10 slots x 5 variants = 50 questions
+- `MATH_POOL`    -- 10 slots x 5 variants = 50 questions
 
 Each playthrough draws **one random question per slot**, and the four answers
 are shuffled at runtime, so the right answer is never in a predictable place.
-Adding a fourth variant to any slot just means adding another object to that
-slot's array.
+That is 5^10 -- just under 10 million -- possible question sets per round.
+Adding a sixth variant to any slot just means adding another object to that
+slot's array; nothing else has to change.
 
 Every question carries a `note`, shown on the feedback card. On a wrong answer
 the note appears together with the correct answer -- that is the teaching
