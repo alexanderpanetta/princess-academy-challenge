@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<title>Esercizi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#07060b;
+  --ink-2:#0f0b16;
+  --ink-3:#171022;
+  --line:#2a1d3d;
+  --purple:#8b5cf6;
+  --purple-soft:#b794f6;
+  --purple-deep:#3b1a6b;
+  --pink:#ff5fa2;
+  --pink-soft:#ffa3ca;
+  --red:#e11d48;
+  --red-soft:#ff5c7a;
+  --gold:#ffcf5c;
+  --text:#f2ecf7;
+  --muted:#a294b8;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{height:100%;}
+
+body{
+  font-family:'Nunito',system-ui,-apple-system,sans-serif;
+  background:var(--ink);
+  color:var(--text);
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  /* subtle purple/red bloom on black */
+  background-image:
+    radial-gradient(58% 42% at 18% 8%, rgba(139,92,246,.20), transparent 70%),
+    radial-gradient(50% 40% at 86% 92%, rgba(225,29,72,.16), transparent 72%),
+    radial-gradient(44% 34% at 92% 12%, rgba(255,95,162,.12), transparent 70%);
+  background-attachment:fixed;
+}
+
+.stage{
+  width:100%;
+  max-width:920px;
+  min-height:640px;
+  background:linear-gradient(168deg,var(--ink-2) 0%,var(--ink) 62%);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:0 0 0 1px rgba(139,92,246,.10), 0 30px 80px rgba(0,0,0,.85);
+  overflow:hidden;
+  position:relative;
+}
+
+/* thin honmoon seam across the top */
+.stage::before{
+  content:"";
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--purple),var(--pink),var(--red),var(--purple),transparent);
+  opacity:.85;
+  z-index:5;
+}
+
+.screen{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:36px 30px;
+  min-height:640px;
+  position:relative;
+}
+.screen.active{display:flex;}
+
+h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacing:.01em;}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:'Fredoka',sans-serif;
+  font-weight:600;
+  font-size:19px;
+  padding:14px 38px;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  color:#fff;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  background:linear-gradient(135deg,var(--purple) 0%,var(--pink) 55%,var(--red) 100%);
+  box-shadow:0 8px 26px rgba(225,29,72,.30), inset 0 1px 0 rgba(255,255,255,.25);
+  transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(225,29,72,.42);}
+.btn:active{transform:translateY(0) scale(.98);}
+
+.btn-ghost{
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--muted);
+  box-shadow:none;
+  font-size:14px;
+  padding:10px 22px;
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--purple);box-shadow:none;transform:none;}
+
+/* ---------- title screen ---------- */
+#title-screen{
+  justify-content:flex-end;
+  gap:0;
+  /* background image is attached by unlockUI(), never before the gate is passed */
+  background-size:cover;
+  background-position:center 22%;
+}
+.title-card{
+  width:100%;
+  max-width:560px;
+  padding:28px 26px 30px;
+  background:rgba(10,7,17,.72);
+  border:1px solid var(--line);
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.eyebrow{
+  font-family:'Fredoka',sans-serif;
+  font-size:12px;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  color:var(--pink);
+  margin-bottom:12px;
+}
+#title-screen h1{
+  font-size:clamp(38px,8vw,60px);
+  font-weight:700;
+  line-height:.98;
+  background:linear-gradient(102deg,#b794f6 0%,#ff5fa2 34%,#e11d48 68%,#ffcf5c 100%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+  margin-bottom:14px;
+}
+.title-sub{color:var(--muted);font-size:16px;line-height:1.55;margin-bottom:24px;}
+.title-sub b{color:var(--text);font-weight:800;}
+
+/* ---------- question screen ---------- */
+#question-screen{justify-content:flex-start;gap:0;}
+.q-body{
+  width:100%;flex:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding-bottom:26px;
+}
+
+.honmoon-bar{
+  width:100%;
+  height:5px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  margin-bottom:22px;
+}
+.honmoon-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold));
+  box-shadow:0 0 14px rgba(255,95,162,.75);
+  transition:width .45s cubic-bezier(.4,0,.2,1);
+}
+
+.round-row{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:20px;
+}
+.round-name{
+  font-family:'Fredoka',sans-serif;
+  font-size:14px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--purple-soft);
+  text-align:left;
+}
+.round-count{
+  font-size:13px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+.q-text{
+  width:100%;
+  font-family:'Fredoka',sans-serif;
+  font-weight:500;
+  font-size:clamp(19px,2.5vw,25px);
+  line-height:1.45;
+  color:var(--text);
+  background:var(--ink-3);
+  border:1px solid var(--line);
+  border-left:3px solid var(--pink);
+  border-radius:14px;
+  padding:22px 24px;
+  margin-bottom:22px;
+  text-align:left;
+}
+.q-text .quote{color:var(--pink-soft);}
+
+.answers{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.answer{
+  font-family:'Nunito',sans-serif;
+  font-weight:700;
+  font-size:17px;
+  text-align:left;
+  padding:16px 20px;
+  border-radius:13px;
+  border:1px solid var(--line);
+  background:var(--ink-3);
+  color:var(--text);
+  cursor:pointer;
+  transition:border-color .16s, background .16s, transform .12s;
+  -webkit-tap-highlight-color:transparent;
+}
+.answer:hover{border-color:var(--purple);background:#1d1430;transform:translateY(-1px);}
+.answer.correct{
+  border-color:var(--gold);
+  background:linear-gradient(135deg,rgba(255,207,92,.18),rgba(255,95,162,.12));
+  color:#fff;
+}
+.answer.wrong{
+  border-color:var(--red);
+  background:rgba(225,29,72,.16);
+  color:#ffd7de;
+}
+.answer.dim{opacity:.4;}
+
+/* ---------- interlude ---------- */
+.panel{
+  width:100%;
+  max-width:520px;
+  background:rgba(10,7,17,.8);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:34px 28px;
+}
+.panel h2{font-size:30px;margin-bottom:8px;}
+.big-score{
+  font-family:'Fredoka',sans-serif;
+  font-size:52px;
+  font-weight:700;
+  line-height:1;
+  margin:16px 0 6px;
+  background:linear-gradient(96deg,var(--purple-soft),var(--pink),var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.panel p{color:var(--muted);font-size:16px;line-height:1.6;}
+.panel .lead-in{margin:18px 0 26px;color:var(--pink-soft);font-size:15px;}
+
+/* ---------- feedback overlay ---------- */
+.overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  background:rgba(4,3,7,.90);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease;
+  z-index:20;
+}
+.overlay.active{opacity:1;}
+.fb-card{
+  width:100%;max-width:520px;
+  text-align:center;
+  transform:scale(.94);
+  transition:transform .28s cubic-bezier(.2,.9,.3,1.2);
+}
+.overlay.active .fb-card{transform:scale(1);}
+.fb-label{
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:clamp(26px,5vw,38px);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+.overlay.good .fb-label{
+  background:linear-gradient(96deg,var(--pink),var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.overlay.bad .fb-label{color:var(--red-soft);}
+.fb-img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:var(--ink-2);
+}
+.overlay.good .fb-img{box-shadow:0 0 0 1px rgba(255,95,162,.55),0 0 46px rgba(255,95,162,.32);}
+.overlay.bad .fb-img{box-shadow:0 0 0 1px rgba(225,29,72,.55),0 0 46px rgba(225,29,72,.30);}
+.fb-note{
+  margin-top:16px;
+  font-size:16px;
+  line-height:1.55;
+  color:var(--muted);
+  min-height:1.4em;
+}
+.fb-note b{color:var(--pink-soft);font-weight:800;}
+
+/* ---------- results ---------- */
+#results-screen{
+  /* background image is attached by unlockUI() */
+  background-size:cover;background-position:center;
+}
+.rank{
+  font-family:'Fredoka',sans-serif;
+  font-weight:700;
+  font-size:clamp(28px,5.5vw,42px);
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  margin:6px 0 10px;
+}
+.rank.tier-gold{background:linear-gradient(96deg,var(--gold),#fff3c4,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.rank.tier-rainbow{background:linear-gradient(96deg,var(--purple-soft),var(--pink),var(--gold),#7ee8d0);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.rank.tier-hold{color:var(--pink-soft);}
+.rank.tier-train{color:var(--purple-soft);}
+.breakdown{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  margin:20px 0 26px;
+}
+.chip{
+  font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 16px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);
+}
+.chip b{color:var(--text);font-weight:800;}
+.rank-line{color:var(--muted);font-size:16px;line-height:1.6;max-width:420px;margin:0 auto 26px;}
+
+/* ---------- gate ----------
+   Deliberately anonymous: no artwork, no colour, no wording that
+   says what is behind it. Just a grey box asking for a password. */
+body.locked{
+  background:#0b0b0d;
+  background-image:none;
+}
+body.locked .stage{
+  background:#0b0b0d;
+  border-color:#232328;
+  box-shadow:none;
+}
+body.locked .stage::before{display:none;}
+
+#gate-screen .panel{
+  max-width:360px;
+  background:#141418;
+  border-color:#2b2b32;
+  padding:30px 26px;
+}
+.gate-label{
+  font-family:'Nunito',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#8b8b96;
+  margin-bottom:4px;
+}
+.btn-plain{
+  background:#2b2b33;
+  color:#d8d8de;
+  box-shadow:none;
+  font-size:15px;
+  letter-spacing:.08em;
+  padding:12px 30px;
+}
+.btn-plain:hover{background:#3a3a44;box-shadow:none;transform:none;}
+#gate-input{
+  width:100%;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:18px;
+  text-align:center;letter-spacing:.14em;
+  padding:14px;margin:18px 0 6px;
+  background:#0e0e11;border:1px solid #2b2b32;border-radius:12px;color:#e8e8ee;
+}
+#gate-input:focus{outline:none;border-color:#4a4a56;}
+#gate-msg{min-height:1.3em;font-size:14px;color:#9c8b8b;margin-bottom:14px;}
+
+.footnote{
+  position:absolute;bottom:14px;left:0;right:0;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4a3f5c;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:720px){
+  body{padding:0;}
+  .stage{border-radius:0;border:none;min-height:100dvh;}
+  .screen{min-height:100dvh;padding:26px 18px 40px;}
+  .answers{grid-template-columns:1fr;}
+  .q-text{padding:18px 18px;}
+  .round-row{margin-bottom:16px;}
+  .q-body{justify-content:flex-start;padding-bottom:0;}
+}
+@media (max-width:420px){
+  .answer{font-size:16px;padding:14px 16px;}
+  .btn{font-size:17px;padding:13px 30px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important;}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- Gate (optional) -->
+  <div id="gate-screen" class="screen">
+    <div class="panel">
+      <p class="gate-label">Password</p>
+      <input id="gate-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Password">
+      <p id="gate-msg"></p>
+      <button class="btn btn-plain" onclick="checkGate()">Entra</button>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div id="title-screen" class="screen">
+    <div class="title-card">
+      <p class="eyebrow">KPop Demon Hunters</p>
+      <h1>Missione<br>Honmoon</h1>
+      <p class="title-sub">
+        <b>10 domande sulla storia.</b> Poi <b>10 domande di matematica.</b><br>
+        Ogni risposta giusta rafforza l'Honmoon. Ogni errore nutre Gwi&#8209;Ma.
+      </p>
+      <button class="btn" onclick="startGame()">Inizia la missione</button>
+    </div>
+    <p class="footnote">thebubugame.com</p>
+  </div>
+
+  <!-- Questions -->
+  <div id="question-screen" class="screen">
+    <div class="honmoon-bar"><div class="honmoon-fill" id="honmoon-fill"></div></div>
+    <div class="round-row">
+      <div class="round-name" id="round-name">Round 1 &middot; La Storia</div>
+      <div class="round-count" id="round-count">1 / 10</div>
+    </div>
+    <div class="q-body">
+      <div class="q-text" id="q-text"></div>
+      <div class="answers" id="answers"></div>
+    </div>
+  </div>
+
+  <!-- Interlude -->
+  <div id="interlude-screen" class="screen">
+    <div class="panel">
+      <p class="eyebrow">Round 1 completato</p>
+      <h2>La Storia</h2>
+      <div class="big-score" id="interlude-score">0 / 10</div>
+      <p class="lead-in" id="interlude-line">L'Honmoon regge.</p>
+      <p>Adesso i demoni sperano che tu perda il conto. Il Round 2 è <b style="color:var(--text)">Matematica da Battaglia</b>.</p>
+      <div style="margin-top:26px"><button class="btn" onclick="startMathRound()">Continua a combattere</button></div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results-screen" class="screen">
+    <div class="panel" style="background:rgba(10,7,17,.86)">
+      <p class="eyebrow">Missione completata</p>
+      <div class="rank" id="rank-title">Honmoon Dorato</div>
+      <div class="big-score" id="final-score">0 / 20</div>
+      <div class="breakdown">
+        <span class="chip">Storia <b id="chip-reading">0/10</b></span>
+        <span class="chip">Matematica <b id="chip-math">0/10</b></span>
+      </div>
+      <p class="rank-line" id="rank-line"></p>
+      <button class="btn" onclick="restart()">Gioca ancora</button>
+    </div>
+  </div>
+
+  <!-- Feedback overlay -->
+  <div id="overlay" class="overlay">
+    <div class="fb-card">
+      <p class="fb-label" id="fb-label"></p>
+      <img class="fb-img" id="fb-img" src="" alt="">
+      <p class="fb-note" id="fb-note"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   HONMOON QUEST  --  thebubugame.com/hunters
+   10 story (reading) questions + 10 battle math questions.
+   ============================================================ */
+
+/* ---- Password gate ----
+   While locked, the page is deliberately anonymous: neutral tab title,
+   no artwork, no colour, nothing naming the film. None of the movie
+   images are even requested until the password is accepted.
+   Client-side only: it keeps the page from being casually browsed,
+   it is not real security.                                        */
+const GATE_ENABLED  = true;
+const GATE_PASSWORD = 'honmoon';
+
+/* ============================ AUDIO ============================
+   Sounds are synthesised in the browser: nothing to download and
+   nothing to license. If you later drop real clips into
+   hunters/sfx/correct.mp3 and hunters/sfx/wrong.mp3 they take over
+   automatically -- no code change needed.                        */
+
+let AC = null;
+function ac(){
+  if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+  if(AC.state === 'suspended') AC.resume();
+  return AC;
+}
+
+// One synth voice with an envelope, optional filter and optional pitch bend.
+function voice(o){
+  const c = ac();
+  const t = c.currentTime + (o.at || 0);
+  const dur = o.dur || 0.3;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  let node = osc;
+
+  osc.type = o.type || 'sine';
+  osc.frequency.setValueAtTime(o.freq, t);
+  if(o.bendTo) osc.frequency.exponentialRampToValueAtTime(o.bendTo, t + dur);
+  if(o.detune) osc.detune.setValueAtTime(o.detune, t);
+
+  if(o.filter){
+    const f = c.createBiquadFilter();
+    f.type = 'lowpass';
+    f.frequency.setValueAtTime(o.filter, t);
+    f.Q.value = o.q || 1;
+    node.connect(f); node = f;
+  }
+
+  const peak = o.vol == null ? 0.25 : o.vol;
+  const atk = o.attack == null ? 0.012 : o.attack;
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), t + atk);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+  node.connect(gain);
+  gain.connect(c.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.05);
+}
+
+// Bright, rising, celebratory. E major pentatonic run + shimmer + soft thump.
+function synthCorrect(){
+  const run = [659.25, 830.61, 987.77, 1108.73, 1318.51]; // E5 G#5 B5 C#6 E6
+  run.forEach((f, i) => {
+    voice({freq:f, at:i*0.062, dur:0.34, type:'triangle', vol:0.26, filter:5200});
+    voice({freq:f*2, at:i*0.062, dur:0.20, type:'sine', vol:0.07});           // shimmer
+  });
+  voice({freq:329.63, at:0, dur:0.85, type:'sine', vol:0.14});                 // E4 pad
+  voice({freq:164.81, at:0, dur:0.9,  type:'sine', vol:0.16});                 // E3 root
+  voice({freq:1318.51, at:0.32, dur:0.9, type:'sine', vol:0.10});              // held sparkle
+  voice({freq:80, at:0, dur:0.16, type:'sine', vol:0.30, bendTo:45});          // soft kick
+}
+
+// Low, sinking, somber. Not scary -- just "the Honmoon dimmed".
+function synthWrong(){
+  voice({freq:110.00, at:0,    dur:1.15, type:'sawtooth', vol:0.16, filter:420, bendTo:82.41});
+  voice({freq:155.56, at:0,    dur:1.15, type:'sawtooth', vol:0.11, filter:380, bendTo:116.54}); // tritone
+  voice({freq:220.00, at:0.10, dur:0.85, type:'sine',     vol:0.12, bendTo:174.61});
+  voice({freq:65.41,  at:0,    dur:0.55, type:'sine',     vol:0.26, bendTo:41.20});              // low thud
+}
+
+function synthFanfare(tier){
+  if(tier === 'train'){
+    [392.00, 349.23, 329.63, 293.66].forEach((f,i) =>
+      voice({freq:f, at:i*0.30, dur:0.55, type:'sine', vol:0.20}));
+    return;
+  }
+  const mel = tier === 'gold'
+    ? [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50, 1318.51]
+    : [523.25, 659.25, 783.99, 1046.50, 987.77];
+  mel.forEach((f,i) => {
+    voice({freq:f, at:i*0.17, dur:0.42, type:'triangle', vol:0.28, filter:6000});
+    voice({freq:f/2, at:i*0.17, dur:0.42, type:'sine', vol:0.10});
+  });
+  voice({freq:130.81, at:0, dur:1.5, type:'sine', vol:0.16});
+  if(tier === 'gold') voice({freq:1567.98, at:1.15, dur:1.2, type:'sine', vol:0.10});
+}
+
+// Optional real audio files. Drop correct.mp3 / wrong.mp3 into hunters/sfx/
+// and flip this to true -- they then replace the synthesised stings.
+const SFX_FILES_PRESENT = false;
+const sfxEl = {}, sfxOk = {correct:false, wrong:false};
+if(SFX_FILES_PRESENT){
+  ['correct','wrong'].forEach(k => {
+    const a = new Audio('sfx/' + k + '.mp3');
+    a.preload = 'auto';
+    a.addEventListener('canplaythrough', () => { sfxOk[k] = true; }, {once:true});
+    a.addEventListener('error', () => { sfxOk[k] = false; });
+    sfxEl[k] = a;
+  });
+}
+function playSfx(kind){
+  try{
+    if(sfxOk[kind]){ sfxEl[kind].currentTime = 0; sfxEl[kind].play().catch(()=>{}); return; }
+    kind === 'correct' ? synthCorrect() : synthWrong();
+  }catch(e){ /* audio blocked; the game still plays fine */ }
+}
+
+/* ============================ ART ============================ */
+const HERO_COUNT = 27;   // images/good/h01..h27  (Huntrix, Derpy the tiger, chibis)
+const DEMON_COUNT = 10;  // images/evil/d01..d10  (Saja Boys, Gwi-Ma's demons)
+
+const heroPics  = Array.from({length:HERO_COUNT},  (_,i) => '../hunters/images/good/h' + String(i+1).padStart(2,'0') + '.jpg');
+const demonPics = Array.from({length:DEMON_COUNT}, (_,i) => '../hunters/images/evil/d' + String(i+1).padStart(2,'0') + '.jpg');
+
+// Shuffled bags, so she does not see the same picture twice in a row.
+function makeBag(list){
+  let bag = [];
+  return function next(){
+    if(!bag.length) bag = shuffle(list.slice());
+    return bag.pop();
+  };
+}
+const nextHero  = makeBag(heroPics);
+const nextDemon = makeBag(demonPics);
+
+// Preloading happens in unlockUI(), so a locked page requests no artwork.
+function preloadArt(){
+  [...heroPics, ...demonPics].forEach(src => { const i = new Image(); i.src = src; });
+}
+
+const WIN_LABELS  = ['Oro!','Honmoon su!','Takedown!','Esatto!','Vittoria!','Perfetto!'];
+const LOSE_LABELS = ['Non proprio','Gwi-Ma sorride',"L'Honmoon si spegne",'Quasi','Prova la prossima'];
+
+/* ========================= QUESTIONS =========================
+   Ten slots per round. One question is drawn at random from each
+   slot every playthrough, so the quest is different every time. */
+
+const READING_POOL = [
+  /* 1. La leggenda */
+  [
+    {passage:"Tanto tempo fa, i demoni predavano gli umani e offrivano le anime rubate a Gwi-Ma.",
+     question:"Cosa significa 'predavano'?",
+     answers:["Cantavano per loro","Davano loro la caccia e li ferivano","Li tenevano al sicuro","Li ignoravano"], correct:1,
+     note:"Predare vuol dire dare la caccia e fare del male."},
+    {passage:"Le cacciatrici usavano la voce per creare una barriera magica chiamata Honmoon.",
+     question:"Cosa significa 'barriera'?",
+     answers:["Un tipo di ballo","Qualcosa che blocca il passaggio","Una canzone pop","Il nome di un demone"], correct:1,
+     note:"Una barriera blocca il passaggio. L'Honmoon è uno scudo fatto di canto."},
+    {passage:"Le cacciatrici sognavano l'Honmoon Dorato: un sigillo capace di bandire i demoni per sempre.",
+     question:"Cosa significa 'bandire'?",
+     answers:["Invitare dentro","Cacciare via per sempre","Nutrire","Copiare"], correct:1,
+     note:"Bandire vuol dire cacciare via per sempre."}
+  ],
+  /* 2. Il gruppo */
+  [
+    {passage:"Zoey è la rapper delle Huntrix, ed è la più dolce del gruppo.",
+     question:"Chi è la rapper delle Huntrix?",
+     answers:["Rumi","Mira","Zoey","Celine"], correct:2,
+     note:"È Zoey. Rumi è la voce solista e Mira è la ribelle."},
+    {passage:"Mira è la pecora nera della sua famiglia ed è la più ribelle del trio.",
+     question:"Cosa significa 'ribelle'?",
+     answers:["Segue sempre le regole","Ama infrangere le regole","Molto assonnata","Molto timida"], correct:1,
+     note:"Ribelle vuol dire che ama infrangere le regole. Proprio come Mira."},
+    {passage:"Rumi è la voce solista delle Huntrix. Sua madre cantava nelle Sunlight Sisters.",
+     question:"Cosa significa 'solista'?",
+     answers:["Chi balla","Chi canta da sola la parte principale","Chi suona la batteria","Chi organizza i concerti"], correct:1,
+     note:"La solista canta da sola la parte principale."}
+  ],
+  /* 3. Il segreto di Rumi */
+  [
+    {passage:"Rumi è per metà demone. Lo sanno solo lei e Celine.",
+     question:"Chi altro conosceva il segreto di Rumi all'inizio della storia?",
+     answers:["Mira","Zoey","Celine","Jinu"], correct:2,
+     note:"Celine ha cresciuto Rumi e l'ha aiutata a nascondere i segni."},
+    {passage:"Rumi era turbata dai segni da demone che si allargavano sulla sua pelle.",
+     question:"Cosa significa 'turbata'?",
+     answers:["Resa tranquilla","Resa inquieta e preoccupata","Resa affamata","Resa più forte"], correct:1,
+     note:"Turbata vuol dire inquieta, preoccupata."},
+    {passage:"Rumi nascondeva i suoi segni perché provava vergogna.",
+     question:"Cosa significa 'vergogna'?",
+     answers:["Sentirsi fieri di sé","Sentirsi sbagliati e volersi nascondere","Sentire fame","Un tipo di canzone"], correct:1,
+     note:"La vergogna è sentirsi sbagliati. Tutto il film parla di come liberarsene."}
+  ],
+  /* 4. Gwi-Ma */
+  [
+    {passage:"Gwi-Ma andò su tutte le furie quando i suoi sgherri non gli portarono nessuna anima.",
+     question:"Cosa vuol dire 'andare su tutte le furie'?",
+     answers:["Diventare felicissimi","Arrabbiarsi moltissimo","Addormentarsi","Diventare timidi"], correct:1,
+     note:"Andare su tutte le furie vuol dire arrabbiarsi moltissimo."},
+    {passage:"Gwi-Ma puniva i suoi sgherri quando perdevano contro le Huntrix.",
+     question:"Che cos'è uno 'sgherro'?",
+     answers:["Un capo","Un servitore che obbedisce agli ordini","Un cantante","Una tigre domestica"], correct:1,
+     note:"Gli sgherri sono servitori. Gwi-Ma è il capo a cui devono obbedire."},
+    {passage:"Gwi-Ma gettò la folla in trance e la attirò verso il concerto dei Saja Boys.",
+     question:"Cosa vuol dire essere in 'trance'?",
+     answers:["Essere in gara","Essere svegli ma come incantati","Cantare a voce alta","Salire sul palco"], correct:1,
+     note:"In trance sei sveglio, ma come incantato: non decidi tu."}
+  ],
+  /* 5. I Saja Boys */
+  [
+    {passage:"Cinque demoni formarono una boy band, i Saja Boys, per rubare i fan alle Huntrix.",
+     question:"Quanti erano i Saja Boys?",
+     answers:["Tre","Quattro","Cinque","Sei"], correct:2,
+     note:"Cinque: Jinu, Romance, Mystery, Abs e Baby."},
+    {passage:"I Saja Boys erano impostori: sembravano pop star, ma erano demoni.",
+     question:"Che cos'è un 'impostore'?",
+     answers:["Un bravissimo cantante","Qualcuno che finge di essere un altro","Un tipo di ballo","Un aiutante"], correct:1,
+     note:"Un impostore finge di essere qualcuno che non è."},
+    {passage:"In poco tempo i Saja Boys accumularono milioni di fan.",
+     question:"Cosa significa 'accumulare'?",
+     answers:["Perdere","Mettere insieme in grandissima quantità","Cantare a qualcuno","Nascondersi"], correct:1,
+     note:"Accumulare vuol dire mettere insieme tantissime cose, una sopra l'altra."}
+  ],
+  /* 6. Jinu */
+  [
+    {passage:"Quattrocento anni fa, Jinu fece un patto con Gwi-Ma.",
+     question:"Quanto tempo fa Jinu fece il suo patto?",
+     answers:["Quattro anni fa","Quaranta anni fa","Quattrocento anni fa","Quattromila anni fa"], correct:2,
+     note:"Quattrocento anni fa. Jinu è vecchissimo."},
+    {passage:"La famiglia di Jinu viveva in miseria prima del patto.",
+     question:"Cosa significa 'miseria'?",
+     answers:["Grande ricchezza","Povertà estrema","Un grande palazzo","Un lungo viaggio"], correct:1,
+     note:"La miseria è non avere quasi niente. Per questo Jinu accettò il patto."},
+    {passage:"Jinu viveva con il senso di colpa per ciò che era successo alla sua famiglia.",
+     question:"Che cos'è il 'senso di colpa'?",
+     answers:["Una sensazione allegra","La sensazione di aver fatto qualcosa di sbagliato","Un tipo di musica","Un'arma dei demoni"], correct:1,
+     note:"Il senso di colpa è il peso di aver fatto qualcosa di sbagliato."}
+  ],
+  /* 7. Le canzoni */
+  [
+    {passage:"Le Huntrix scrissero in fretta una nuova canzone, Takedown, per smascherare i Saja Boys.",
+     question:"Cosa significa 'smascherare'?",
+     answers:["Nascondere","Rivelare la verità su qualcuno","Cantare insieme","Invitare a casa"], correct:1,
+     note:"Smascherare vuol dire togliere la maschera: far vedere a tutti la verità."},
+    {passage:"A Rumi non piaceva il testo di Takedown, duro e pieno di odio verso i demoni.",
+     question:"Che cos'è il 'testo' di una canzone?",
+     answers:["I passi di danza","Le parole che si cantano","Le luci del palco","I costumi"], correct:1,
+     note:"Il testo sono le parole. Rumi non voleva cantarle, perché lei è per metà demone."},
+    {passage:"Jinu accettò di sabotare i Saja Boys per far vincere le Huntrix.",
+     question:"Cosa significa 'sabotare'?",
+     answers:["Aiutare a vincere","Rovinare qualcosa di proposito","Cantare fortissimo","Scappare via"], correct:1,
+     note:"Sabotare vuol dire rovinare qualcosa di proposito, di solito di nascosto."}
+  ],
+  /* 8. Il tradimento */
+  [
+    {passage:"Dei demoni travestiti attirarono Mira e Zoey lontano dal palco.",
+     question:"Cosa significa 'attirare'?",
+     answers:["Spingere via","Far venire qualcuno, spesso con l'inganno","Cantare a qualcuno","Proteggere"], correct:1,
+     note:"Attirare vuol dire far venire qualcuno verso di sé, spesso con l'inganno."},
+    {passage:"Mira e Zoey si sentirono tradite quando scoprirono che Rumi aveva un segreto.",
+     question:"Cosa significa 'tradite'?",
+     answers:["Deluse da qualcuno di cui si fidavano","Ricoperte di regali","Rese felicissime","Lasciate sole sul palco"], correct:0,
+     note:"Tradite vuol dire deluse da qualcuno di cui si fidavano. Per questo ha fatto così male."},
+    {passage:"Rumi affrontò Jinu, e lui ammise di aver mentito sul suo passato.",
+     question:"Cosa significa 'affrontò'?",
+     answers:["Scappò da lui","Lo guardò in faccia e gli parlò chiaro","Cantò con lui","Si dimenticò di lui"], correct:1,
+     note:"Affrontare qualcuno vuol dire guardarlo in faccia e parlargli chiaro."}
+  ],
+  /* 9. Il finale */
+  [
+    {passage:"Rumi interruppe il concerto con una canzone improvvisata sull'accettare sé stessa.",
+     question:"Cosa significa 'improvvisata'?",
+     answers:["Provata per mesi","Inventata sul momento","Scritta da Gwi-Ma","Cantata pianissimo"], correct:1,
+     note:"Improvvisata vuol dire inventata lì per lì, senza nessuna prova."},
+    {passage:"Un Jinu pentito si mise davanti al colpo per salvare Rumi.",
+     question:"Cosa significa 'pentito'?",
+     answers:["Fiero di quello che ha fatto","Dispiaciuto per quello che ha fatto","Arrabbiato con Rumi","Profondamente addormentato"], correct:1,
+     note:"Pentito vuol dire davvero dispiaciuto. Jinu restituì a Rumi la sua anima."},
+    {passage:"Le Huntrix sconfissero Gwi-Ma e un nuovo Honmoon arcobaleno si alzò sulla città.",
+     question:"Di che colore era il nuovo Honmoon?",
+     answers:["Dorato","Argentato","Arcobaleno","Nero"], correct:2,
+     note:"Arcobaleno, perché Rumi aveva smesso di nascondere una parte di sé."}
+  ],
+  /* 10. Il messaggio */
+  [
+    {passage:"L'ultima canzone di Rumi parlava di accettare ogni parte di sé, anche quelle che nascondeva.",
+     question:"Qual è la lezione della canzone di Rumi?",
+     answers:["Nascondi chi sei","Accetta chi sei","Canta più forte di tutti","Non fidarti mai degli amici"], correct:1,
+     note:"Accetta chi sei. È questo che ha reso l'Honmoon un arcobaleno."},
+    {passage:"Mira disse: 'È in gioco tutto. Dobbiamo solo superarla insieme.'",
+     question:"Cosa voleva dire Mira?",
+     answers:["Ognuna deve combattere da sola","Devono fare squadra","Devono sciogliere il gruppo","Devono scappare e nascondersi"], correct:1,
+     note:"Insieme. Mira ricorda a Rumi che sono una squadra."},
+    {passage:"Rumi disse: 'La cosa buffa della speranza è che nessun altro può decidere se provarla.'",
+     question:"Cosa voleva dire Rumi?",
+     answers:["La speranza è una tua scelta","La speranza appartiene a Gwi-Ma","La speranza è solo una canzone","La speranza non esiste"], correct:0,
+     note:"La speranza è una tua scelta. Nessuno, nemmeno un re dei demoni, può portartela via."}
+  ]
+];
+
+const MATH_POOL = [
+  /* 1. Addizioni */
+  [
+    {question:"Le Huntrix sono 3. I Saja Boys sono 5. Quanti artisti ci sono in tutto?",
+     answers:["7","8","9","15"], correct:1, note:"3 + 5 = 8."},
+    {question:"Rumi ha cantato 4 canzoni e Zoey ne ha cantate 3. Quante canzoni in tutto?",
+     answers:["6","7","8","12"], correct:1, note:"4 + 3 = 7."},
+    {question:"Ci sono 5 Saja Boys. Poi altri 4 demoni passano attraverso l'Honmoon. Quanti demoni ci sono adesso?",
+     answers:["8","9","10","20"], correct:1, note:"5 + 4 = 9."}
+  ],
+  /* 2. Sottrazioni */
+  [
+    {question:"C'erano 5 Saja Boys. Le Huntrix ne hanno sconfitti 4. Quanti ne restano?",
+     answers:["0","1","2","9"], correct:1, note:"5 - 4 = 1. Resta solo Jinu."},
+    {question:"Zoey aveva preparato 9 snack per il jet. Ne ha mangiati 3. Quanti ne restano?",
+     answers:["5","6","7","12"], correct:1, note:"9 - 3 = 6."},
+    {question:"10 demoni attaccano l'aereo. Mira ne mette fuori gioco 6. Quanti stanno ancora combattendo?",
+     answers:["3","4","5","16"], correct:1, note:"10 - 6 = 4."}
+  ],
+  /* 3. La sottrazione disfa l'addizione */
+  [
+    {question:"7 + 5 = 12. Allora quanto fa 12 - 5?",
+     answers:["5","6","7","17"], correct:2,
+     note:"12 - 5 = 7. La sottrazione disfa l'addizione: ti riporta esattamente al 7 di partenza."},
+    {question:"Mira ha 12 frecce e ne trova altre 3, quindi ne ha 15. Poi perde proprio quelle 3. Quante ne ha adesso?",
+     answers:["12","13","15","18"], correct:0,
+     note:"Di nuovo 12. Aggiungere 3 e poi togliere 3 si annullano a vicenda."},
+    {question:"8 + 6 = 14. Allora quanto fa 14 - 6?",
+     answers:["6","7","8","20"], correct:2,
+     note:"14 - 6 = 8. Togliendo di nuovo il 6, resta l'8 di partenza."}
+  ],
+  /* 4. Stessa somma, decine più grandi */
+  [
+    {question:"3 + 4 = 7. Allora quanto fa 13 + 4?",
+     answers:["7","16","17","34"], correct:2,
+     note:"13 + 4 = 17. La parte 3 + 4 = 7 non cambia mai: il 10 resta lì davanti."},
+    {question:"2 + 5 = 7. Allora quanto fa 22 + 5?",
+     answers:["25","26","27","52"], correct:2,
+     note:"22 + 5 = 27. Sempre 2 + 5 = 7, con il 20 lì davanti."},
+    {question:"6 + 3 = 9. Allora quanto fa 46 + 3?",
+     answers:["39","48","49","63"], correct:2,
+     note:"46 + 3 = 49. La parte 6 + 3 = 9 resta identica: il 40 aspetta lì davanti."}
+  ],
+  /* 5. Stessa differenza, decine più grandi */
+  [
+    {question:"8 - 5 = 3. Allora quanto fa 38 - 5?",
+     answers:["30","33","35","83"], correct:1,
+     note:"38 - 5 = 33. La parte 8 - 5 = 3 resta uguale, e il 30 non si muove."},
+    {question:"9 - 4 = 5. Allora quanto fa 29 - 4?",
+     answers:["24","25","26","49"], correct:1,
+     note:"29 - 4 = 25. Sempre 9 - 4 = 5, con il 20 sempre lì."},
+    {question:"7 - 3 = 4. Allora quanto fa 57 - 3?",
+     answers:["50","53","54","74"], correct:2,
+     note:"57 - 3 = 54. La parte 7 - 3 = 4 non cambia, e il 50 resta fermo."}
+  ],
+  /* 6. Numeri più grandi */
+  [
+    {question:"L'Honmoon aveva 20 crepe. Poi ne sono comparse altre 15. Quante crepe ci sono adesso?",
+     answers:["25","30","35","40"], correct:2, note:"20 + 15 = 35."},
+    {question:"Le Huntrix hanno venduto 30 biglietti la mattina e 25 la sera. Quanti biglietti in tutto?",
+     answers:["45","50","55","65"], correct:2, note:"30 + 25 = 55."},
+    {question:"Jinu ha aspettato 400 anni. Se ne aspetta altri 20, quanti anni sono?",
+     answers:["402","410","420","600"], correct:2, note:"400 + 20 = 420."}
+  ],
+  /* 7. Gruppi da */
+  [
+    {question:"Ognuna delle 3 Huntrix porta 2 armi. Quante armi in tutto?",
+     answers:["5","6","7","8"], correct:1, note:"3 gruppi da 2 = 6. Cioè 2 + 2 + 2."},
+    {question:"I 5 Saja Boys cantano 2 canzoni ciascuno. Quante canzoni in tutto?",
+     answers:["7","8","10","12"], correct:2, note:"5 gruppi da 2 = 10."},
+    {question:"Le Huntrix fanno 4 concerti e cantano 5 canzoni per ogni concerto. Quante canzoni in tutto?",
+     answers:["9","16","20","25"], correct:2, note:"4 gruppi da 5 = 20."}
+  ],
+  /* 8. Quanti in più */
+  [
+    {question:"Le Huntrix sono 3. I Saja Boys sono 5. Quanti Saja Boys ci sono IN PIÙ?",
+     answers:["1","2","3","8"], correct:1, note:"5 - 3 = 2 in più."},
+    {question:"I Saja Boys avevano 50 fan in piazza. Le Huntrix ne avevano 80. Quanti fan in più avevano le Huntrix?",
+     answers:["20","30","40","130"], correct:1, note:"80 - 50 = 30 in più."},
+    {question:"Zoey ha fatto 14 punti e Mira ne ha fatti 9. Quanti punti in più ha fatto Zoey?",
+     answers:["4","5","6","23"], correct:1, note:"14 - 9 = 5 in più."}
+  ],
+  /* 9. Quanti ne mancano */
+  [
+    {question:"Rumi deve salvare 10 anime. Ne ha salvate 6. Quante gliene mancano?",
+     answers:["3","4","5","16"], correct:1, note:"6 + ? = 10, quindi il numero mancante è 4."},
+    {question:"Il gruppo ha bisogno di 12 canzoni per l'album. Ne ha scritte 7. Quante ne mancano?",
+     answers:["4","5","6","19"], correct:1, note:"7 + ? = 12, quindi il numero mancante è 5."},
+    {question:"Mira vuole 15 frecce. Ne ha 8. Quante gliene mancano?",
+     answers:["6","7","8","23"], correct:1, note:"8 + ? = 15, quindi il numero mancante è 7."}
+  ],
+  /* 10. Due passaggi */
+  [
+    {question:"Sul palco ci sono 5 Saja Boys. 2 scappano, poi arrivano altri 3 demoni. Quanti ce ne sono adesso sul palco?",
+     answers:["5","6","7","10"], correct:1, note:"5 - 2 = 3, poi 3 + 3 = 6."},
+    {question:"Zoey ha 10 snack. Ne mangia 4, poi Mira gliene dà 5. Quanti snack ha adesso?",
+     answers:["9","10","11","19"], correct:2, note:"10 - 4 = 6, poi 6 + 5 = 11."},
+    {question:"L'Honmoon ha 8 crepe. Le Huntrix ne sigillano 3, poi se ne aprono 6 nuove. Quante crepe ci sono adesso?",
+     answers:["9","10","11","17"], correct:2, note:"8 - 3 = 5, poi 5 + 6 = 11."}
+  ]
+];
+
+/* ========================= GAME STATE ========================= */
+const TOTAL_PER_ROUND = 10;
+let round = 'reading';      // 'reading' | 'math'
+let qIndex = 0;
+let readingScore = 0, mathScore = 0;
+let locked = false;
+let readingSet = [], mathSet = [];
+let advanceTimer = null;
+
+function shuffle(a){
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Draw one question per slot, and shuffle the answer order so the
+// right answer is never in a predictable spot.
+function drawSet(pool){
+  return pool.map(slot => {
+    const q = slot[Math.floor(Math.random() * slot.length)];
+    const rightText = q.answers[q.correct];
+    const answers = shuffle(q.answers.slice());
+    return Object.assign({}, q, {answers, correct: answers.indexOf(rightText)});
+  });
+}
+
+let unlocked = false;
+function unlockUI(){
+  if(unlocked) return;
+  unlocked = true;
+  document.title = 'Missione Honmoon';
+  document.body.classList.remove('locked');
+  document.getElementById('title-screen').style.backgroundImage =
+    "linear-gradient(180deg,rgba(7,6,11,.30) 0%,rgba(7,6,11,.78) 52%,rgba(7,6,11,.97) 100%),url('../hunters/images/title-bg.jpg')";
+  document.getElementById('results-screen').style.backgroundImage =
+    "linear-gradient(180deg,rgba(7,6,11,.86) 0%,rgba(7,6,11,.94) 100%),url('../hunters/images/results-bg.jpg')";
+  preloadArt();
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame(){
+  ac();                       // unlock audio on this first real tap
+  round = 'reading';
+  qIndex = 0;
+  readingScore = 0;
+  mathScore = 0;
+  readingSet = drawSet(READING_POOL);
+  mathSet = drawSet(MATH_POOL);
+  show('question-screen');
+  renderQuestion();
+}
+
+function startMathRound(){
+  round = 'math';
+  qIndex = 0;
+  show('question-screen');
+  renderQuestion();
+}
+
+function currentSet(){ return round === 'reading' ? readingSet : mathSet; }
+
+function renderQuestion(){
+  locked = false;
+  const q = currentSet()[qIndex];
+
+  document.getElementById('round-name').textContent =
+    round === 'reading' ? 'Round 1 · La Storia' : 'Round 2 · Matematica da Battaglia';
+  document.getElementById('round-count').textContent = (qIndex + 1) + ' / ' + TOTAL_PER_ROUND;
+
+  const done = round === 'reading' ? qIndex : TOTAL_PER_ROUND + qIndex;
+  document.getElementById('honmoon-fill').style.width = (done * 5) + '%';
+
+  const box = document.getElementById('q-text');
+  box.innerHTML = q.passage
+    ? '<span class="quote">' + q.passage + '</span><br><br>' + q.question
+    : q.question;
+
+  const wrap = document.getElementById('answers');
+  wrap.innerHTML = '';
+  q.answers.forEach((text, i) => {
+    const b = document.createElement('button');
+    b.className = 'answer';
+    b.type = 'button';
+    b.textContent = text;
+    b.addEventListener('click', () => answer(i));
+    wrap.appendChild(b);
+  });
+}
+
+function answer(picked){
+  if(locked) return;
+  locked = true;
+
+  const q = currentSet()[qIndex];
+  const right = picked === q.correct;
+  const buttons = document.querySelectorAll('#answers .answer');
+
+  buttons.forEach((b, i) => {
+    b.style.pointerEvents = 'none';
+    if(i === q.correct) b.classList.add('correct');
+    else if(i === picked) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+
+  if(right){ round === 'reading' ? readingScore++ : mathScore++; }
+
+  setTimeout(() => {
+    showFeedback(right, q);
+    playSfx(right ? 'correct' : 'wrong');
+  }, 620);
+
+  advanceTimer = setTimeout(nextQuestion, right ? 3000 : 4200);
+}
+
+function showFeedback(right, q){
+  const ov = document.getElementById('overlay');
+  const pool = right ? WIN_LABELS : LOSE_LABELS;
+
+  ov.classList.remove('good','bad');
+  ov.classList.add(right ? 'good' : 'bad');
+  document.getElementById('fb-label').textContent = pool[Math.floor(Math.random() * pool.length)];
+  document.getElementById('fb-img').src = right ? nextHero() : nextDemon();
+
+  const note = document.getElementById('fb-note');
+  note.innerHTML = right
+    ? (q.note || '')
+    : 'La risposta era <b>' + q.answers[q.correct] + '</b><br>' + (q.note || '');
+
+  ov.classList.add('active');
+  ov.style.pointerEvents = 'auto';
+  ov.onclick = nextQuestion;          // tap to skip ahead
+}
+
+function nextQuestion(){
+  clearTimeout(advanceTimer);
+  const ov = document.getElementById('overlay');
+  ov.onclick = null;
+  ov.style.pointerEvents = 'none';
+  ov.classList.remove('active');
+
+  qIndex++;
+  if(qIndex < TOTAL_PER_ROUND){ renderQuestion(); return; }
+
+  if(round === 'reading'){
+    document.getElementById('interlude-score').textContent = readingScore + ' / 10';
+    document.getElementById('interlude-line').textContent =
+      readingScore >= 8 ? "L'Honmoon brilla."
+      : readingScore >= 5 ? "L'Honmoon regge."
+      : "L'Honmoon vacilla. Il Round 2 può ancora salvarlo.";
+    show('interlude-screen');
+  } else {
+    showResults();
+  }
+}
+
+function showResults(){
+  const total = readingScore + mathScore;
+  let tier, title, line;
+
+  if(total >= 18){
+    tier = 'gold'; title = 'Honmoon Dorato';
+    line = "Sigillato per sempre. Stanotte Gwi-Ma non prende nemmeno un'anima.";
+  } else if(total >= 14){
+    tier = 'rainbow'; title = 'Honmoon Arcobaleno';
+    line = 'Rumi sarebbe fiera di te. La barriera brilla e tutti i fan sono al sicuro.';
+  } else if(total >= 10){
+    tier = 'hold'; title = "L'Honmoon Regge";
+    line = 'Qualche crepa è passata, ma i demoni restano fuori. Rigioca e sigillale.';
+  } else {
+    tier = 'train'; title = 'Continua ad Allenarti';
+    line = 'Ogni cacciatrice comincia da qualche parte. Celine si è allenata per anni. Riprova.';
+  }
+
+  document.getElementById('honmoon-fill').style.width = '100%';
+  const rank = document.getElementById('rank-title');
+  rank.className = 'rank tier-' + tier;
+  rank.textContent = title;
+  document.getElementById('final-score').textContent = total + ' / 20';
+  document.getElementById('chip-reading').textContent = readingScore + '/10';
+  document.getElementById('chip-math').textContent = mathScore + '/10';
+  document.getElementById('rank-line').textContent = line;
+
+  show('results-screen');
+  setTimeout(() => synthFanfare(tier), 350);
+}
+
+function restart(){ show('title-screen'); }
+
+/* ============================ GATE ============================ */
+function checkGate(){
+  const val = document.getElementById('gate-input').value.trim().toLowerCase();
+  if(val === GATE_PASSWORD.toLowerCase()){
+    try{ sessionStorage.setItem('honmoon-gate','1'); }catch(e){}
+    unlockUI();
+    show('title-screen');
+  } else {
+    document.getElementById('gate-msg').textContent = 'Password errata.';
+    document.getElementById('gate-input').value = '';
+  }
+}
+
+(function boot(){
+  let passed = false;
+  try{ passed = sessionStorage.getItem('honmoon-gate') === '1'; }catch(e){}
+  if(GATE_ENABLED && !passed){
+    document.body.classList.add('locked');
+    show('gate-screen');
+    const inp = document.getElementById('gate-input');
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter') checkGate(); });
+    setTimeout(() => inp.focus(), 100);
+  } else {
+    unlockUI();
+    show('title-screen');
+  }
+})();
+</script>
+</body>
+</html>
