@@ -151,12 +151,7 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 .title-sub b{color:var(--text);font-weight:800;}
 
 /* ---------- question screen ---------- */
-#question-screen{
-  justify-content:flex-start;gap:0;
-  /* round artwork is attached by renderQuestion(), never before unlock */
-  background-size:cover;
-  background-position:center;
-}
+#question-screen{justify-content:flex-start;gap:0;}
 .q-body{
   width:100%;flex:1;
   display:flex;flex-direction:column;justify-content:center;
@@ -186,19 +181,6 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
   gap:14px;
   margin-bottom:20px;
 }
-/* the character "asking" this question -- changes every question */
-.guide{
-  width:46px;height:46px;flex:none;
-  border-radius:50%;
-  object-fit:cover;
-  background:var(--ink-3);
-  box-shadow:0 0 0 2px rgba(255,95,162,.55), 0 0 18px rgba(255,95,162,.30);
-  transition:box-shadow .3s ease;
-}
-.round-math .guide{
-  box-shadow:0 0 0 2px rgba(225,29,72,.60), 0 0 18px rgba(225,29,72,.32);
-}
-
 .round-name{
   font-family:'Fredoka',sans-serif;
   font-size:14px;
@@ -206,9 +188,7 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
   text-transform:uppercase;
   color:var(--purple-soft);
   text-align:left;
-  flex:1;
 }
-.round-math .round-name{color:var(--red-soft);}
 .round-count{
   font-size:13px;
   letter-spacing:.12em;
@@ -219,8 +199,6 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 
 .q-text{
   width:100%;
-  backdrop-filter:blur(3px);
-  -webkit-backdrop-filter:blur(3px);
   font-family:'Fredoka',sans-serif;
   font-weight:500;
   font-size:clamp(19px,2.5vw,25px);
@@ -431,7 +409,6 @@ body.locked .stage::before{display:none;}
   .stage{border-radius:0;border:none;min-height:100dvh;}
   .screen{min-height:100dvh;padding:26px 18px 40px;}
   .answers{grid-template-columns:1fr;}
-  .guide{width:38px;height:38px;}
   .q-text{padding:18px 18px;}
   .round-row{margin-bottom:16px;}
   .q-body{justify-content:flex-start;padding-bottom:0;}
@@ -476,7 +453,6 @@ body.locked .stage::before{display:none;}
   <div id="question-screen" class="screen">
     <div class="honmoon-bar"><div class="honmoon-fill" id="honmoon-fill"></div></div>
     <div class="round-row">
-      <img class="guide" id="guide" alt="" hidden>
       <div class="round-name" id="round-name">Round 1 &middot; Story Power</div>
       <div class="round-count" id="round-count">1 / 10</div>
     </div>
@@ -517,7 +493,7 @@ body.locked .stage::before{display:none;}
   <div id="overlay" class="overlay">
     <div class="fb-card">
       <p class="fb-label" id="fb-label"></p>
-      <img class="fb-img" id="fb-img" alt="" hidden>
+      <img class="fb-img" id="fb-img" src="" alt="">
       <p class="fb-note" id="fb-note"></p>
     </div>
   </div>
@@ -647,46 +623,24 @@ function playSfx(kind){
 /* ============================ ART ============================ */
 const HERO_COUNT = 27;   // images/good/h01..h27  (Huntrix, Derpy the tiger, chibis)
 const DEMON_COUNT = 10;  // images/evil/d01..d10  (Saja Boys, Gwi-Ma's demons)
-const FACE_COUNT  = 9;   // images/faces/f01..f09   (the guide portrait on each question)
 
 const heroPics  = Array.from({length:HERO_COUNT},  (_,i) => 'images/good/h' + String(i+1).padStart(2,'0') + '.jpg');
 const demonPics = Array.from({length:DEMON_COUNT}, (_,i) => 'images/evil/d' + String(i+1).padStart(2,'0') + '.jpg');
-const facePics  = Array.from({length:FACE_COUNT},  (_,i) => 'images/faces/f' + String(i+1).padStart(2,'0') + '.jpg');
-
-// Blurred, dimmed scene art behind the questions. The scrim is baked in here
-// so the question panel always wins the contrast fight.
-const SCRIM = 'linear-gradient(180deg,rgba(7,6,11,.62) 0%,rgba(7,6,11,.74) 40%,rgba(7,6,11,.92) 100%)';
-const BG_STORY = SCRIM + ",url('images/scene/bg-story.jpg')";
-const BG_MATH  = SCRIM + ",url('images/scene/bg-math.jpg')";
 
 // Shuffled bags, so she does not see the same picture twice in a row.
-// Set an image source safely: never leave a broken glyph on screen, and
-// never assign undefined (which would request /undefined and 404).
-function setImage(el, src){
-  if(!src){ el.hidden = true; return; }
-  el.hidden = false;
-  el.onerror = () => { el.hidden = true; };
-  el.onload  = () => { el.hidden = false; };
-  el.src = src;
-}
-
 function makeBag(list){
   let bag = [];
   return function next(){
-    if(!list.length) return null;
     if(!bag.length) bag = shuffle(list.slice());
     return bag.pop();
   };
 }
 const nextHero  = makeBag(heroPics);
 const nextDemon = makeBag(demonPics);
-const nextFace  = makeBag(facePics);
 
 // Preloading happens in unlockUI(), so a locked page requests no artwork.
 function preloadArt(){
-  [...heroPics, ...demonPics, ...facePics,
-   'images/scene/bg-story.jpg', 'images/scene/bg-math.jpg'
-  ].forEach(src => { const i = new Image(); i.src = src; });
+  [...heroPics, ...demonPics].forEach(src => { const i = new Image(); i.src = src; });
 }
 
 const WIN_LABELS  = ['Golden!','Honmoon up!','Takedown!','That is it!','Hunters win!','Nailed it!'];
@@ -1287,11 +1241,6 @@ function renderQuestion(){
     round === 'reading' ? 'Round 1 · Story Power' : 'Round 2 · Battle Math';
   document.getElementById('round-count').textContent = (qIndex + 1) + ' / ' + TOTAL_PER_ROUND;
 
-  const screen = document.getElementById('question-screen');
-  screen.classList.toggle('round-math', round === 'math');
-  screen.style.backgroundImage = round === 'reading' ? BG_STORY : BG_MATH;
-  setImage(document.getElementById('guide'), nextFace());
-
   const done = round === 'reading' ? qIndex : TOTAL_PER_ROUND + qIndex;
   document.getElementById('honmoon-fill').style.width = (done * 5) + '%';
 
@@ -1344,7 +1293,7 @@ function showFeedback(right, q){
   ov.classList.remove('good','bad');
   ov.classList.add(right ? 'good' : 'bad');
   document.getElementById('fb-label').textContent = pool[Math.floor(Math.random() * pool.length)];
-  setImage(document.getElementById('fb-img'), right ? nextHero() : nextDemon());
+  document.getElementById('fb-img').src = right ? nextHero() : nextDemon();
 
   const note = document.getElementById('fb-note');
   note.innerHTML = right
