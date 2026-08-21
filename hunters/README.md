@@ -38,13 +38,36 @@ word problems, all wrapped in movie situations.
 
 ## Art
 
-- `images/good/h01..h27.jpg` -- Huntrix, Derpy the tiger, the chibis. Shown on a right answer.
-- `images/evil/d01..d10.jpg` -- Saja Boys, Gwi-Ma's demons. Shown on a wrong answer.
-- `images/title-bg.jpg`, `images/results-bg.jpg`
+**On the feedback card, after each answer:**
 
-Pictures are drawn from a shuffled bag, so the same one never appears twice in
-a row. To add or remove art, drop files in and update `HERO_COUNT` /
-`DEMON_COUNT` -- the filenames are generated from those numbers.
+- `images/good/h01..h27.jpg` -- Huntrix, Derpy the tiger, the chibis. Right answer.
+- `images/evil/d01..d10.jpg` -- Saja Boys, Gwi-Ma's demons. Wrong answer.
+
+**On the question pages themselves:**
+
+- `images/faces/f01..f09.jpg` -- square character portraits. One sits beside the
+  round name as the "guide" asking the question, and it changes every question.
+- `images/scene/bg-story.jpg` -- Huntrix silhouettes in mist, behind round 1.
+- `images/scene/bg-math.jpg` -- Saja Boys silhouettes on red, behind round 2.
+
+The two scene images are **pre-blurred and pre-darkened at build time**
+(ffmpeg `gblur` + `eq`), so they read as atmosphere rather than competing with
+the text, and the browser does no work. A scrim gradient is baked into the
+`SCRIM` constant on top of that. If you swap either image, blur it first or
+the questions get hard to read.
+
+Round 2 also swaps the accent from pink to red -- the round name and the ring
+around the guide portrait -- via a `round-math` class on the question screen.
+
+**On the title and results screens:** `images/title-bg.jpg`, `images/results-bg.jpg`.
+
+Pictures are drawn from shuffled bags, so the same one never appears twice in
+a row. To add or remove art, drop files in and update `HERO_COUNT`,
+`DEMON_COUNT` or `FACE_COUNT` -- the filenames are generated from those numbers.
+
+**Everything above is attached by `unlockUI()`**, never by parse-time CSS or
+JS, so a locked page still requests no artwork at all. If you add a new image
+anywhere, wire it in there too or it will leak past the gate.
 
 ## Sound
 

@@ -6,8 +6,10 @@ gate -- everything translated.
 ## What is shared and what is not
 
 - **Artwork is shared, not duplicated.** The image paths point at
-  `../hunters/images/`, so there is exactly one copy of the 2.3 MB of art in
-  the repo. Renaming or moving `hunters/images/` breaks this page too.
+  `../hunters/images/` -- feedback art, the question-page guide portraits
+  (`faces/`) and the round backgrounds (`scene/`) alike. There is exactly one
+  copy of the art in the repo. Renaming or moving `hunters/images/` breaks
+  this page too.
 - **The code is a standalone copy.** A fix to `hunters/index.html` does not
   reach this file, so real changes to game logic have to be made in both.
 
