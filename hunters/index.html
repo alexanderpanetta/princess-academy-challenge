@@ -476,7 +476,7 @@ body.locked .stage::before{display:none;}
   <div id="question-screen" class="screen">
     <div class="honmoon-bar"><div class="honmoon-fill" id="honmoon-fill"></div></div>
     <div class="round-row">
-      <img class="guide" id="guide" src="" alt="">
+      <img class="guide" id="guide" alt="" hidden>
       <div class="round-name" id="round-name">Round 1 &middot; Story Power</div>
       <div class="round-count" id="round-count">1 / 10</div>
     </div>
@@ -517,7 +517,7 @@ body.locked .stage::before{display:none;}
   <div id="overlay" class="overlay">
     <div class="fb-card">
       <p class="fb-label" id="fb-label"></p>
-      <img class="fb-img" id="fb-img" src="" alt="">
+      <img class="fb-img" id="fb-img" alt="" hidden>
       <p class="fb-note" id="fb-note"></p>
     </div>
   </div>
@@ -660,9 +660,20 @@ const BG_STORY = SCRIM + ",url('images/scene/bg-story.jpg')";
 const BG_MATH  = SCRIM + ",url('images/scene/bg-math.jpg')";
 
 // Shuffled bags, so she does not see the same picture twice in a row.
+// Set an image source safely: never leave a broken glyph on screen, and
+// never assign undefined (which would request /undefined and 404).
+function setImage(el, src){
+  if(!src){ el.hidden = true; return; }
+  el.hidden = false;
+  el.onerror = () => { el.hidden = true; };
+  el.onload  = () => { el.hidden = false; };
+  el.src = src;
+}
+
 function makeBag(list){
   let bag = [];
   return function next(){
+    if(!list.length) return null;
     if(!bag.length) bag = shuffle(list.slice());
     return bag.pop();
   };
@@ -1279,7 +1290,7 @@ function renderQuestion(){
   const screen = document.getElementById('question-screen');
   screen.classList.toggle('round-math', round === 'math');
   screen.style.backgroundImage = round === 'reading' ? BG_STORY : BG_MATH;
-  document.getElementById('guide').src = nextFace();
+  setImage(document.getElementById('guide'), nextFace());
 
   const done = round === 'reading' ? qIndex : TOTAL_PER_ROUND + qIndex;
   document.getElementById('honmoon-fill').style.width = (done * 5) + '%';
@@ -1333,7 +1344,7 @@ function showFeedback(right, q){
   ov.classList.remove('good','bad');
   ov.classList.add(right ? 'good' : 'bad');
   document.getElementById('fb-label').textContent = pool[Math.floor(Math.random() * pool.length)];
-  document.getElementById('fb-img').src = right ? nextHero() : nextDemon();
+  setImage(document.getElementById('fb-img'), right ? nextHero() : nextDemon());
 
   const note = document.getElementById('fb-note');
   note.innerHTML = right
