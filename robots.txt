@@ -1,0 +1,5 @@
+# thebubugame.com -- personal games for one kid.
+# The unlisted game pages are not for search engines or AI crawlers.
+User-agent: *
+Disallow: /hunters/
+Disallow: /math/
