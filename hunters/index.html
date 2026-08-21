@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
-<title>Honmoon Quest</title>
+<title>Practice</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -116,7 +116,7 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 #title-screen{
   justify-content:flex-end;
   gap:0;
-  background-image:linear-gradient(180deg,rgba(7,6,11,.30) 0%,rgba(7,6,11,.78) 52%,rgba(7,6,11,.97) 100%),url('images/title-bg.jpg');
+  /* background image is attached by unlockUI(), never before the gate is passed */
   background-size:cover;
   background-position:center 22%;
 }
@@ -323,7 +323,7 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 
 /* ---------- results ---------- */
 #results-screen{
-  background-image:linear-gradient(180deg,rgba(7,6,11,.86) 0%,rgba(7,6,11,.94) 100%),url('images/results-bg.jpg');
+  /* background image is attached by unlockUI() */
   background-size:cover;background-position:center;
 }
 .rank{
@@ -350,17 +350,53 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 .chip b{color:var(--text);font-weight:800;}
 .rank-line{color:var(--muted);font-size:16px;line-height:1.6;max-width:420px;margin:0 auto 26px;}
 
-/* ---------- gate ---------- */
-#gate-screen .panel{max-width:420px;}
+/* ---------- gate ----------
+   Deliberately anonymous: no artwork, no colour, no wording that
+   says what is behind it. Just a grey box asking for a password. */
+body.locked{
+  background:#0b0b0d;
+  background-image:none;
+}
+body.locked .stage{
+  background:#0b0b0d;
+  border-color:#232328;
+  box-shadow:none;
+}
+body.locked .stage::before{display:none;}
+
+#gate-screen .panel{
+  max-width:360px;
+  background:#141418;
+  border-color:#2b2b32;
+  padding:30px 26px;
+}
+.gate-label{
+  font-family:'Nunito',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:#8b8b96;
+  margin-bottom:4px;
+}
+.btn-plain{
+  background:#2b2b33;
+  color:#d8d8de;
+  box-shadow:none;
+  font-size:15px;
+  letter-spacing:.08em;
+  padding:12px 30px;
+}
+.btn-plain:hover{background:#3a3a44;box-shadow:none;transform:none;}
 #gate-input{
   width:100%;
   font-family:'Nunito',sans-serif;font-weight:700;font-size:18px;
   text-align:center;letter-spacing:.14em;
-  padding:14px;margin:20px 0 6px;
-  background:var(--ink-3);border:1px solid var(--line);border-radius:12px;color:var(--text);
+  padding:14px;margin:18px 0 6px;
+  background:#0e0e11;border:1px solid #2b2b32;border-radius:12px;color:#e8e8ee;
 }
-#gate-input:focus{outline:none;border-color:var(--purple);}
-#gate-msg{min-height:1.3em;font-size:14px;color:var(--red-soft);margin-bottom:16px;}
+#gate-input:focus{outline:none;border-color:#4a4a56;}
+#gate-msg{min-height:1.3em;font-size:14px;color:#9c8b8b;margin-bottom:14px;}
 
 .footnote{
   position:absolute;bottom:14px;left:0;right:0;
@@ -392,12 +428,10 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
   <!-- Gate (optional) -->
   <div id="gate-screen" class="screen">
     <div class="panel">
-      <p class="eyebrow">Hunters only</p>
-      <h2>Say the word</h2>
-      <p>Only Hunters can pass the Honmoon.</p>
-      <input id="gate-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="PASSWORD">
+      <p class="gate-label">Password</p>
+      <input id="gate-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Password">
       <p id="gate-msg"></p>
-      <button class="btn" onclick="checkGate()">Enter</button>
+      <button class="btn btn-plain" onclick="checkGate()">Enter</button>
     </div>
   </div>
 
@@ -472,11 +506,13 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
    10 story (reading) questions + 10 battle math questions.
    ============================================================ */
 
-/* ---- Optional password gate (for later, if we want it) ----
-   Flip GATE_ENABLED to true and the game asks for GATE_PASSWORD
-   before anything loads. Client-side only: it keeps the page from
-   being casually browsed, it is not real security.              */
-const GATE_ENABLED  = false;
+/* ---- Password gate ----
+   While locked, the page is deliberately anonymous: neutral tab title,
+   no artwork, no colour, nothing naming the film. None of the movie
+   images are even requested until the password is accepted.
+   Client-side only: it keeps the page from being casually browsed,
+   it is not real security.                                        */
+const GATE_ENABLED  = true;
 const GATE_PASSWORD = 'honmoon';
 
 /* ============================ AUDIO ============================
@@ -602,8 +638,10 @@ function makeBag(list){
 const nextHero  = makeBag(heroPics);
 const nextDemon = makeBag(demonPics);
 
-// Preload so the overlay never flashes empty.
-[...heroPics, ...demonPics].forEach(src => { const i = new Image(); i.src = src; });
+// Preloading happens in unlockUI(), so a locked page requests no artwork.
+function preloadArt(){
+  [...heroPics, ...demonPics].forEach(src => { const i = new Image(); i.src = src; });
+}
 
 const WIN_LABELS  = ['Golden!','Honmoon up!','Takedown!','That is it!','Hunters win!','Nailed it!'];
 const LOSE_LABELS = ['Not quite','Gwi-Ma smiles','The Honmoon dims','Almost','Try the next one'];
@@ -895,6 +933,19 @@ function drawSet(pool){
   });
 }
 
+let unlocked = false;
+function unlockUI(){
+  if(unlocked) return;
+  unlocked = true;
+  document.title = 'Honmoon Quest';
+  document.body.classList.remove('locked');
+  document.getElementById('title-screen').style.backgroundImage =
+    "linear-gradient(180deg,rgba(7,6,11,.30) 0%,rgba(7,6,11,.78) 52%,rgba(7,6,11,.97) 100%),url('images/title-bg.jpg')";
+  document.getElementById('results-screen').style.backgroundImage =
+    "linear-gradient(180deg,rgba(7,6,11,.86) 0%,rgba(7,6,11,.94) 100%),url('images/results-bg.jpg')";
+  preloadArt();
+}
+
 function show(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1053,9 +1104,10 @@ function checkGate(){
   const val = document.getElementById('gate-input').value.trim().toLowerCase();
   if(val === GATE_PASSWORD.toLowerCase()){
     try{ sessionStorage.setItem('honmoon-gate','1'); }catch(e){}
+    unlockUI();
     show('title-screen');
   } else {
-    document.getElementById('gate-msg').textContent = 'That is not the word.';
+    document.getElementById('gate-msg').textContent = 'Incorrect.';
     document.getElementById('gate-input').value = '';
   }
 }
@@ -1064,11 +1116,13 @@ function checkGate(){
   let passed = false;
   try{ passed = sessionStorage.getItem('honmoon-gate') === '1'; }catch(e){}
   if(GATE_ENABLED && !passed){
+    document.body.classList.add('locked');
     show('gate-screen');
     const inp = document.getElementById('gate-input');
     inp.addEventListener('keydown', e => { if(e.key === 'Enter') checkGate(); });
     setTimeout(() => inp.focus(), 100);
   } else {
+    unlockUI();
     show('title-screen');
   }
 })();

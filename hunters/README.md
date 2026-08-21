@@ -55,15 +55,28 @@ and set `SFX_FILES_PRESENT = true`. The synth stays as the fallback.
 
 ## Password gate
 
-Off by default. In `index.html`:
+**On.** The page opens as a grey box that asks for a password and says
+nothing else.
 
 ```js
-const GATE_ENABLED  = false;   // set true to require the password
+const GATE_ENABLED  = true;
 const GATE_PASSWORD = 'honmoon';
 ```
 
+While locked, the page gives away nothing:
+
+- tab title is `Practice`, not the game's name
+- no artwork, no colour, no wording naming the film
+- **none of the movie images are even requested** -- the preload and both
+  screen backgrounds are attached by `unlockUI()`, which only runs after the
+  password is accepted
+
+Verified: a locked page makes exactly one network request, for the Google
+Fonts stylesheet. Once unlocked, the tab title, the palette and the art all
+switch on, and a pass is remembered for the rest of the browser session.
+
 Client-side only -- it keeps the page from being casually browsed, it is not
-real security. It remembers a pass for the browser session.
+real security. To take it back down, set `GATE_ENABLED = false`.
 
 ## Deploy
 
