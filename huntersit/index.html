@@ -493,7 +493,7 @@ body.locked .stage::before{display:none;}
   <div id="overlay" class="overlay">
     <div class="fb-card">
       <p class="fb-label" id="fb-label"></p>
-      <img class="fb-img" id="fb-img" src="" alt="">
+      <img class="fb-img" id="fb-img" alt="">
       <p class="fb-note" id="fb-note"></p>
     </div>
   </div>
@@ -606,7 +606,7 @@ const SFX_FILES_PRESENT = false;
 const sfxEl = {}, sfxOk = {correct:false, wrong:false};
 if(SFX_FILES_PRESENT){
   ['correct','wrong'].forEach(k => {
-    const a = new Audio('sfx/' + k + '.mp3');
+    const a = new Audio('/hunters/sfx/' + k + '.mp3');
     a.preload = 'auto';
     a.addEventListener('canplaythrough', () => { sfxOk[k] = true; }, {once:true});
     a.addEventListener('error', () => { sfxOk[k] = false; });
@@ -624,8 +624,8 @@ function playSfx(kind){
 const HERO_COUNT = 27;   // images/good/h01..h27  (Huntrix, Derpy the tiger, chibis)
 const DEMON_COUNT = 10;  // images/evil/d01..d10  (Saja Boys, Gwi-Ma's demons)
 
-const heroPics  = Array.from({length:HERO_COUNT},  (_,i) => '../hunters/images/good/h' + String(i+1).padStart(2,'0') + '.jpg');
-const demonPics = Array.from({length:DEMON_COUNT}, (_,i) => '../hunters/images/evil/d' + String(i+1).padStart(2,'0') + '.jpg');
+const heroPics  = Array.from({length:HERO_COUNT},  (_,i) => '/hunters/images/good/h' + String(i+1).padStart(2,'0') + '.jpg');
+const demonPics = Array.from({length:DEMON_COUNT}, (_,i) => '/hunters/images/evil/d' + String(i+1).padStart(2,'0') + '.jpg');
 
 // Shuffled bags, so she does not see the same picture twice in a row.
 function makeBag(list){
@@ -1201,9 +1201,9 @@ function unlockUI(){
   document.title = 'Missione Honmoon';
   document.body.classList.remove('locked');
   document.getElementById('title-screen').style.backgroundImage =
-    "linear-gradient(180deg,rgba(7,6,11,.30) 0%,rgba(7,6,11,.78) 52%,rgba(7,6,11,.97) 100%),url('../hunters/images/title-bg.jpg')";
+    "linear-gradient(180deg,rgba(7,6,11,.30) 0%,rgba(7,6,11,.78) 52%,rgba(7,6,11,.97) 100%),url('/hunters/images/title-bg.jpg')";
   document.getElementById('results-screen').style.backgroundImage =
-    "linear-gradient(180deg,rgba(7,6,11,.86) 0%,rgba(7,6,11,.94) 100%),url('../hunters/images/results-bg.jpg')";
+    "linear-gradient(180deg,rgba(7,6,11,.86) 0%,rgba(7,6,11,.94) 100%),url('/hunters/images/results-bg.jpg')";
   preloadArt();
 }
 
