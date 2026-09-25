@@ -6,3 +6,6 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# full-length song downloads (rebuild hunters/sfx with hunters/sfx/make_audio.sh)
+_raw_audio/

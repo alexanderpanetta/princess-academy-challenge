@@ -36,6 +36,29 @@ These mirror the Apple Tree game at `/math`. The rest of the slots are
 adding, taking away, groups-of, comparing, missing addends and two-step
 word problems, all wrapped in movie situations.
 
+## Checkpoints, songs and the ending (added 2026-09-25)
+
+No picture after each answer any more -- just the label and the teaching note.
+Instead the 20 questions run in **four blocks of 5** (story 1-5, story 6-10,
+math 1-5, math 6-10). After each block:
+
+- **4 or 5 right** -> a happy picture + a ~30 s chorus (3 s fade), rotating through
+  "Golden", "Takedown" and "What It Sounds Like". "Keep going" skips it.
+- **0-3 right** -> a demon picture + the sad trombone.
+
+End of game:
+
+- **16+ of 20** -> results screen with a **full song** (one of the three) and the
+  happy pictures rotating every 4 s.
+- **Under 16** -> a demon picture, **"YOU HAVE NO KIMLIK!"**, "Wanna play again?" YES / NO.
+
+Tunables: `BLOCK_SIZE`, `BLOCK_PASS`, `WIN_TOTAL`, `SONGS` in `index.html`.
+Audio lives in `hunters/sfx/` and is rebuilt by `hunters/sfx/make_audio.sh` from
+full-length downloads in `_raw_audio/` (git-ignored); the script lists the YouTube
+sources and the chorus windows (found with Whisper + YouTube's most-replayed
+heatmap). One shared `<audio>` element is played silently inside the Start tap so
+phones allow the songs later. No audio is requested before the password.
+
 ## Art
 
 **On the feedback card, after each answer:**

@@ -321,6 +321,28 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 }
 .fb-note b{color:var(--pink-soft);font-weight:800;}
 
+/* per-answer card: no picture any more (pictures come every 5 answers) */
+.overlay.answer-only .fb-img{display:none;}
+
+/* ---------- checkpoint after every 5 answers ---------- */
+.fb-score{font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--text);margin:-6px 0 14px;letter-spacing:.06em;}
+.fb-next{margin-top:18px;}
+
+/* ---------- win: full song + rotating pictures ---------- */
+.slideshow{position:relative;width:100%;max-width:560px;aspect-ratio:16/9;margin:4px auto 14px;border-radius:16px;overflow:hidden;
+  border:1px solid var(--line);background:var(--ink-2);box-shadow:0 0 0 1px rgba(255,95,162,.55),0 0 46px rgba(255,95,162,.32);}
+.slideshow img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease;}
+.slideshow img.on{opacity:1;}
+.song-name{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-soft);margin:-4px 0 12px;}
+
+/* ---------- lose: no kimlik ---------- */
+#kimlik-screen img{width:100%;max-width:520px;aspect-ratio:16/9;object-fit:cover;border-radius:16px;border:1px solid var(--line);
+  box-shadow:0 0 0 1px rgba(225,29,72,.55),0 0 46px rgba(225,29,72,.30);}
+.kimlik-sign{display:inline-block;margin:18px 0 6px;padding:14px 22px;border:3px solid var(--red-soft);border-radius:12px;transform:rotate(-2deg);
+  font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(24px,5.4vw,40px);letter-spacing:.04em;color:var(--red-soft);background:rgba(225,29,72,.08);}
+.kimlik-q{font-family:'Fredoka',sans-serif;font-size:clamp(20px,4vw,28px);margin:10px 0 18px;}
+.yn{display:flex;gap:16px;justify-content:center;}
+
 /* ---------- results ---------- */
 #results-screen{
   /* background image is attached by unlockUI() */
@@ -478,6 +500,8 @@ body.locked .stage::before{display:none;}
   <div id="results-screen" class="screen">
     <div class="panel" style="background:rgba(10,7,17,.86)">
       <p class="eyebrow">Quest complete</p>
+      <div class="slideshow" id="slideshow"><img id="show-a" alt=""><img id="show-b" alt=""></div>
+      <p class="song-name" id="song-name"></p>
       <div class="rank" id="rank-title">Golden Honmoon</div>
       <div class="big-score" id="final-score">0 / 20</div>
       <div class="breakdown">
@@ -489,12 +513,28 @@ body.locked .stage::before{display:none;}
     </div>
   </div>
 
+  <!-- Lose: fewer than WIN_TOTAL -->
+  <div id="kimlik-screen" class="screen">
+    <div class="panel">
+      <img id="kimlik-img" alt="">
+      <div class="kimlik-sign">YOU HAVE NO KIMLIK!</div>
+      <p class="kimlik-q">Wanna play again?</p>
+      <div class="yn"><button class="btn" onclick="stopMusic();startGame()">Yes</button><button class="btn btn-ghost" onclick="stopMusic();show('bye-screen')">No</button></div>
+    </div>
+  </div>
+
+  <div id="bye-screen" class="screen">
+    <div class="panel"><h2>Bye, Hunter! 👋</h2><div style="margin-top:22px"><button class="btn btn-ghost" onclick="restart()">Back to start</button></div></div>
+  </div>
+
   <!-- Feedback overlay -->
   <div id="overlay" class="overlay">
     <div class="fb-card">
       <p class="fb-label" id="fb-label"></p>
+      <p class="fb-score" id="fb-score" hidden></p>
       <img class="fb-img" id="fb-img" alt="">
       <p class="fb-note" id="fb-note"></p>
+      <div class="fb-next" id="fb-next" hidden><button class="btn" id="fb-next-btn">Keep going</button></div>
     </div>
   </div>
 
@@ -620,6 +660,35 @@ function playSfx(kind){
   }catch(e){ /* audio blocked; the game still plays fine */ }
 }
 
+/* ======================= SONGS + TROMBONE =======================
+   Every 5 answers is a checkpoint: 4 or 5 right -> a happy picture and a
+   ~30 s chorus; fewer -> a demon picture and the sad trombone.
+   End of game: WIN_TOTAL or more -> a full song with rotating pictures;
+   fewer -> a demon and "YOU HAVE NO KIMLIK!".
+   Files in hunters/sfx/ (rebuild with hunters/sfx/make_audio.sh).
+   One shared <audio>, first played inside the Start tap, so phones let
+   it play later without a tap.                                        */
+const BLOCK_SIZE = 5, BLOCK_PASS = 4, WIN_TOTAL = 16;
+const SONGS = [
+  {name:'Golden',              chorus:'/hunters/sfx/chorus-golden.m4a',   full:'/hunters/sfx/full-golden.m4a'},
+  {name:'Takedown',            chorus:'/hunters/sfx/chorus-takedown.m4a', full:'/hunters/sfx/full-takedown.m4a'},
+  {name:'What It Sounds Like', chorus:'/hunters/sfx/chorus-wisl.m4a',     full:'/hunters/sfx/full-wisl.m4a'},
+];
+const TROMBONE = '/hunters/sfx/sad-trombone.m4a';
+let music = null;
+function unlockMusic(){
+  if(!music){ music = new Audio(); music.preload = 'auto'; }
+  try{ music.src = TROMBONE; music.muted = true;
+       music.play().then(() => { music.pause(); music.muted = false; music.currentTime = 0; }).catch(() => { music.muted = false; }); }catch(e){}
+}
+function playMusic(src, onEnd){
+  if(!music) return;
+  music.onended = onEnd || null;
+  music.muted = false; music.src = src;
+  music.play().catch(() => {});
+}
+function stopMusic(){ if(music){ music.onended = null; try{ music.pause(); }catch(e){} } stopSlideshow(); }
+
 /* ============================ ART ============================ */
 const HERO_COUNT = 27;   // images/good/h01..h27  (Huntrix, Derpy the tiger, chibis)
 const DEMON_COUNT = 10;  // images/evil/d01..d10  (Saja Boys, Gwi-Ma's demons)
@@ -636,6 +705,7 @@ function makeBag(list){
   };
 }
 const nextHero  = makeBag(heroPics);
+const nextSong  = makeBag(SONGS);
 const nextDemon = makeBag(demonPics);
 
 // Preloading happens in unlockUI(), so a locked page requests no artwork.
@@ -1174,6 +1244,7 @@ let readingScore = 0, mathScore = 0;
 let locked = false;
 let readingSet = [], mathSet = [];
 let advanceTimer = null;
+let blockScore = 0;          // right answers in the current block of 5
 
 function shuffle(a){
   for(let i = a.length - 1; i > 0; i--){
@@ -1214,6 +1285,8 @@ function show(id){
 
 function startGame(){
   ac();                       // unlock audio on this first real tap
+  unlockMusic();
+  blockScore = 0;
   round = 'reading';
   qIndex = 0;
   readingScore = 0;
@@ -1276,7 +1349,7 @@ function answer(picked){
     else b.classList.add('dim');
   });
 
-  if(right){ round === 'reading' ? readingScore++ : mathScore++; }
+  if(right){ round === 'reading' ? readingScore++ : mathScore++; blockScore++; }
 
   setTimeout(() => {
     showFeedback(right, q);
@@ -1291,9 +1364,10 @@ function showFeedback(right, q){
   const pool = right ? WIN_LABELS : LOSE_LABELS;
 
   ov.classList.remove('good','bad');
-  ov.classList.add(right ? 'good' : 'bad');
+  ov.classList.add(right ? 'good' : 'bad', 'answer-only');
   document.getElementById('fb-label').textContent = pool[Math.floor(Math.random() * pool.length)];
-  document.getElementById('fb-img').src = right ? nextHero() : nextDemon();
+  document.getElementById('fb-score').hidden = true;
+  document.getElementById('fb-next').hidden = true;
 
   const note = document.getElementById('fb-note');
   note.innerHTML = right
@@ -1305,13 +1379,44 @@ function showFeedback(right, q){
   ov.onclick = nextQuestion;          // tap to skip ahead
 }
 
-function nextQuestion(){
-  clearTimeout(advanceTimer);
+function hideOverlay(){
   const ov = document.getElementById('overlay');
   ov.onclick = null;
   ov.style.pointerEvents = 'none';
   ov.classList.remove('active');
+}
 
+function nextQuestion(){
+  clearTimeout(advanceTimer);
+  hideOverlay();
+  if((qIndex + 1) % BLOCK_SIZE === 0){ showCheckpoint(); return; }
+  continueAfter();
+}
+
+// After every 5th answer: picture + chorus, or demon + sad trombone.
+function showCheckpoint(){
+  const n = blockScore, good = n >= BLOCK_PASS;
+  blockScore = 0;
+  const ov = document.getElementById('overlay');
+  ov.classList.remove('good','bad','answer-only');
+  ov.classList.add(good ? 'good' : 'bad');
+  const song = good ? nextSong() : null;
+  document.getElementById('fb-label').textContent = good ? (n === 5 ? 'Perfect!' : 'Huntrix wins!') : 'Gwi-Ma wins this one';
+  const sc = document.getElementById('fb-score'); sc.hidden = false; sc.textContent = n + ' / 5 right';
+  document.getElementById('fb-img').src = good ? nextHero() : nextDemon();
+  document.getElementById('fb-note').innerHTML = good ? '&#9835; ' + song.name : 'Four right wins a song. Try the next five!';
+  const nx = document.getElementById('fb-next'); nx.hidden = false;
+  let done = false;
+  const go = () => { if(done) return; done = true; clearTimeout(advanceTimer); stopMusic(); hideOverlay(); continueAfter(); };
+  document.getElementById('fb-next-btn').onclick = go;
+  ov.onclick = null;
+  ov.classList.add('active');
+  ov.style.pointerEvents = 'auto';
+  if(good){ playMusic(song.chorus, go); advanceTimer = setTimeout(go, 32000); }
+  else    { playMusic(TROMBONE);        advanceTimer = setTimeout(go, 6000); }
+}
+
+function continueAfter(){
   qIndex++;
   if(qIndex < TOTAL_PER_ROUND){ renderQuestion(); return; }
 
@@ -1330,6 +1435,14 @@ function nextQuestion(){
 function showResults(){
   const total = readingScore + mathScore;
   let tier, title, line;
+
+  if(total < WIN_TOTAL){
+    document.getElementById('honmoon-fill').style.width = '100%';
+    document.getElementById('kimlik-img').src = nextDemon();
+    show('kimlik-screen');
+    setTimeout(() => playMusic(TROMBONE), 350);
+    return;
+  }
 
   if(total >= 18){
     tier = 'gold'; title = 'Golden Honmoon';
@@ -1355,10 +1468,29 @@ function showResults(){
   document.getElementById('rank-line').textContent = line;
 
   show('results-screen');
-  setTimeout(() => synthFanfare(tier), 350);
+  // the full song, with the happy pictures rotating
+  const song = nextSong();
+  document.getElementById('song-name').textContent = '\u266B ' + song.name;
+  startSlideshow();
+  setTimeout(() => playMusic(song.full, stopSlideshowLater), 300);
 }
 
-function restart(){ show('title-screen'); }
+let slideTimer = null;
+function startSlideshow(){
+  stopSlideshow();
+  const a = document.getElementById('show-a'), b = document.getElementById('show-b');
+  let front = a;
+  a.src = nextHero(); a.classList.add('on'); b.classList.remove('on');
+  slideTimer = setInterval(() => {
+    const back = front === a ? b : a;
+    back.src = nextHero();
+    back.classList.add('on'); front.classList.remove('on'); front = back;
+  }, 4000);
+}
+function stopSlideshow(){ clearInterval(slideTimer); slideTimer = null; }
+function stopSlideshowLater(){ setTimeout(stopSlideshow, 4000); }
+
+function restart(){ stopMusic(); show('title-screen'); }
 
 /* ============================ GATE ============================ */
 function checkGate(){
