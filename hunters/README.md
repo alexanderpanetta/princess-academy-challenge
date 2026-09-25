@@ -48,12 +48,14 @@ math 1-5, math 6-10). After each block:
 
 End of game:
 
-- **16+ of 20** -> results screen with a **full song** (one of the three) and the
-  happy pictures rotating every 4 s.
+- **16+ of 20** -> results screen plays **30 s from one song's video** (rotating:
+  Golden official MV, the Takedown film scene, the What It Sounds Like finale), in
+  `hunters/video/`, 3 s fade at the end. (Until later on 2026-09-25 this was the full
+  song with rotating pictures; Alex swapped it for the video.)
 - **Under 16** -> a demon picture, **"YOU HAVE NO KIMLIK!"**, "Wanna play again?" YES / NO.
 
 Tunables: `BLOCK_SIZE`, `BLOCK_PASS`, `WIN_TOTAL`, `SONGS` in `index.html`.
-Audio lives in `hunters/sfx/` and is rebuilt by `hunters/sfx/make_audio.sh` from
+Audio lives in `hunters/sfx/`, the ending videos in `hunters/video/`; both are rebuilt by `hunters/sfx/make_audio.sh` from
 full-length downloads in `_raw_audio/` (git-ignored); the script lists the YouTube
 sources and the chorus windows (found with Whisper + YouTube's most-replayed
 heatmap). One shared `<audio>` element is played silently inside the Start tap so

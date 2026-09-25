@@ -328,11 +328,11 @@ h1,h2,h3,.display{font-family:'Fredoka',sans-serif;font-weight:600;letter-spacin
 .fb-score{font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(20px,4vw,28px);color:var(--text);margin:-6px 0 14px;letter-spacing:.06em;}
 .fb-next{margin-top:18px;}
 
-/* ---------- win: full song + rotating pictures ---------- */
-.slideshow{position:relative;width:100%;max-width:560px;aspect-ratio:16/9;margin:4px auto 14px;border-radius:16px;overflow:hidden;
+/* ---------- win: 30 s of one song's video ---------- */
+.slideshow{position:relative;width:100%;max-width:560px;margin:4px auto 14px;border-radius:16px;overflow:hidden;
   border:1px solid var(--line);background:var(--ink-2);box-shadow:0 0 0 1px rgba(255,95,162,.55),0 0 46px rgba(255,95,162,.32);}
-.slideshow img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s ease;}
-.slideshow img.on{opacity:1;}
+.slideshow video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000;}   /* real ratio set on loadedmetadata: the film clips are widescreen */
+.slideshow .tap{position:absolute;inset:0;width:100%;background:rgba(0,0,0,.45);color:#fff;font-family:'Fredoka',sans-serif;font-size:28px;border:0;cursor:pointer;}
 .song-name{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-soft);margin:-4px 0 12px;}
 
 /* ---------- lose: no kimlik ---------- */
@@ -500,7 +500,7 @@ body.locked .stage::before{display:none;}
   <div id="results-screen" class="screen">
     <div class="panel" style="background:rgba(10,7,17,.86)">
       <p class="eyebrow">Quest complete</p>
-      <div class="slideshow" id="slideshow"><img id="show-a" alt=""><img id="show-b" alt=""></div>
+      <div class="slideshow" id="slideshow"><video id="win-video" playsinline preload="none"></video><button class="tap" id="win-tap" hidden>&#9654; Play</button></div>
       <p class="song-name" id="song-name"></p>
       <div class="rank" id="rank-title">Golden Honmoon</div>
       <div class="big-score" id="final-score">0 / 20</div>
@@ -663,16 +663,17 @@ function playSfx(kind){
 /* ======================= SONGS + TROMBONE =======================
    Every 5 answers is a checkpoint: 4 or 5 right -> a happy picture and a
    ~30 s chorus; fewer -> a demon picture and the sad trombone.
-   End of game: WIN_TOTAL or more -> a full song with rotating pictures;
+   End of game: WIN_TOTAL or more -> 30 s from one song's video;
    fewer -> a demon and "YOU HAVE NO KIMLIK!".
-   Files in hunters/sfx/ (rebuild with hunters/sfx/make_audio.sh).
-   One shared <audio>, first played inside the Start tap, so phones let
-   it play later without a tap.                                        */
+   Files in hunters/sfx/ and hunters/video/ (both rebuilt by
+   hunters/sfx/make_audio.sh). The shared <audio> and the ending <video>
+   are both first played silently inside the Start tap, so phones let
+   them play later without another tap.                                */
 const BLOCK_SIZE = 5, BLOCK_PASS = 4, WIN_TOTAL = 16;
 const SONGS = [
-  {name:'Golden',              chorus:'/hunters/sfx/chorus-golden.m4a',   full:'/hunters/sfx/full-golden.m4a'},
-  {name:'Takedown',            chorus:'/hunters/sfx/chorus-takedown.m4a', full:'/hunters/sfx/full-takedown.m4a'},
-  {name:'What It Sounds Like', chorus:'/hunters/sfx/chorus-wisl.m4a',     full:'/hunters/sfx/full-wisl.m4a'},
+  {name:'Golden',              chorus:'/hunters/sfx/chorus-golden.m4a',   video:'/hunters/video/golden.mp4'},
+  {name:'Takedown',            chorus:'/hunters/sfx/chorus-takedown.m4a', video:'/hunters/video/takedown.mp4'},
+  {name:'What It Sounds Like', chorus:'/hunters/sfx/chorus-wisl.m4a',     video:'/hunters/video/wisl.mp4'},
 ];
 const TROMBONE = '/hunters/sfx/sad-trombone.m4a';
 let music = null;
@@ -680,6 +681,9 @@ function unlockMusic(){
   if(!music){ music = new Audio(); music.preload = 'auto'; }
   try{ music.src = TROMBONE; music.muted = true;
        music.play().then(() => { music.pause(); music.muted = false; music.currentTime = 0; }).catch(() => { music.muted = false; }); }catch(e){}
+  const v = document.getElementById('win-video');
+  try{ v.muted = true; v.src = TROMBONE;
+       v.play().then(() => { v.pause(); v.muted = false; }).catch(() => { v.muted = false; }); }catch(e){}
 }
 function playMusic(src, onEnd){
   if(!music) return;
@@ -687,7 +691,10 @@ function playMusic(src, onEnd){
   music.muted = false; music.src = src;
   music.play().catch(() => {});
 }
-function stopMusic(){ if(music){ music.onended = null; try{ music.pause(); }catch(e){} } stopSlideshow(); }
+function stopMusic(){
+  if(music){ music.onended = null; try{ music.pause(); }catch(e){} }
+  try{ document.getElementById('win-video').pause(); }catch(e){}
+}
 
 /* ============================ ART ============================ */
 const HERO_COUNT = 27;   // images/good/h01..h27  (Huntrix, Derpy the tiger, chibis)
@@ -1468,27 +1475,18 @@ function showResults(){
   document.getElementById('rank-line').textContent = line;
 
   show('results-screen');
-  // the full song, with the happy pictures rotating
+  // 30 seconds of one song's video
   const song = nextSong();
   document.getElementById('song-name').textContent = '\u266B ' + song.name;
-  startSlideshow();
-  setTimeout(() => playMusic(song.full, stopSlideshowLater), 300);
+  const v = document.getElementById('win-video'), tap = document.getElementById('win-tap');
+  tap.hidden = true;
+  v.onloadedmetadata = () => { if(v.videoWidth) v.style.aspectRatio = v.videoWidth + '/' + v.videoHeight; };
+  v.src = song.video;
+  v.play().catch(() => {            // a phone refused to start it without a tap
+    tap.hidden = false;
+    tap.onclick = () => { tap.hidden = true; v.play().catch(() => {}); };
+  });
 }
-
-let slideTimer = null;
-function startSlideshow(){
-  stopSlideshow();
-  const a = document.getElementById('show-a'), b = document.getElementById('show-b');
-  let front = a;
-  a.src = nextHero(); a.classList.add('on'); b.classList.remove('on');
-  slideTimer = setInterval(() => {
-    const back = front === a ? b : a;
-    back.src = nextHero();
-    back.classList.add('on'); front.classList.remove('on'); front = back;
-  }, 4000);
-}
-function stopSlideshow(){ clearInterval(slideTimer); slideTimer = null; }
-function stopSlideshowLater(){ setTimeout(stopSlideshow, 4000); }
 
 function restart(){ stopMusic(); show('title-screen'); }
 
