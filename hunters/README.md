@@ -24,6 +24,15 @@ Every question carries a `note`, shown on the feedback card. On a wrong answer
 the note appears together with the correct answer -- that is the teaching
 moment, so it is worth keeping the notes plain and short.
 
+### Only one hard math question (2026-09-26)
+
+Alex: the math round was too hard (60 + 25, 14 - 9 + 5, and multiplication she
+hasn't learned). Now questions 11-19 are basic adding/taking away (slots 1-9;
+slots 6-7 are new small-number adding/taking-away, and the two big-number
+"how many more" variants were replaced with small ones). **Slot 10 -- always
+question 20 -- is the one "boss" question**, drawn from 15 variants: the old
+bigger-numbers, groups-of and two-steps slots merged together.
+
 ### What the maths is actually drilling
 
 Slots 3, 4 and 5 are the ones that matter most:
